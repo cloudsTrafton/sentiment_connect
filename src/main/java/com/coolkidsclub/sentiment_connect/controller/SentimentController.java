@@ -1,4 +1,5 @@
 package com.coolkidsclub.sentiment_connect.controller;
+import com.coolkidsclub.sentiment_connect.model.RedditPostData;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,11 +18,12 @@ public class SentimentController {
      * @return
      */
     @GetMapping(value = "/get/{subreddit}/{search_term}", produces = "application/json")
-    public String getSentimentFromTopicAndSubreddit(@PathVariable String subreddit, @PathVariable String search_term) {
+    public void getSentimentFromTopicAndSubreddit(@PathVariable String subreddit, @PathVariable String search_term) {
         RestTemplate restTemplate = new RestTemplate();
-        String redditData = restTemplate.getForObject("https://api.pushshift.io/reddit/search/submission/?q=science", String.class);
+        RedditPostData redditPostData =
+                restTemplate.getForObject("https://api.pushshift.io/reddit/search/submission/?q=" + search_term, RedditPostData.class);
 
-        return redditData;
+        System.out.println(redditPostData);
 
     }
 
