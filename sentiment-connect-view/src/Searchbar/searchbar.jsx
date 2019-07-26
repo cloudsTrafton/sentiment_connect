@@ -5,7 +5,6 @@ class Searchbar extends React.Component {
 
     render() {
         return(
-
                 <Form style={{marginLeft: '300px', width: '25rem'}}>
                     <Form.Group controlId="formSearchTerm">
                         <Form.Label>Search Term</Form.Label>

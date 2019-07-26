@@ -11,6 +11,7 @@ function App() {
         <Header/>
         <Searchbar/>
         <ResultCard confidence={50} sentiment={'negative'} topic={'Trump'} subreddit={'r/AskAnAmerican'}/>
+        <ResultCard confidence={50} sentiment={'positive'} topic={'Kitties'} subreddit={'r/aww'}/>
     </div>
   );
 }
