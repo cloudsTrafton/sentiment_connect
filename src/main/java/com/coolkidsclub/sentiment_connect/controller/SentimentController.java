@@ -10,6 +10,31 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping("sentiment")
 public class SentimentController {
 
+    /*
+    Submissions:
+
+    after = Epoch value or Integer + "s,m,h,d" (i.e. 30d for 30 days)
+
+    Ex: https://api.pushshift.io/reddit/search/submission/?q=amazon&after=24h&size=500&fields=title,subreddit
+    EX with r/ : https://api.pushshift.io/reddit/search/submission/?q=amazon&after=24h&size=500&fields=title,subreddit&subreddit=SUB
+
+    */
+
+    /*
+    Comments: (MUST REQUIRE A SUB-REDDIT
+
+    Ex: https://api.pushshift.io/reddit/search/comment/?q=amazon&subreddit=SUB&after=24h&size=500&fields=title,subreddit
+
+
+
+    */
+
+    /*
+    * https://api.pushshift.io/reddit/search/comment/?q=trump&after=7d&aggs=subreddit&&size=0
+    *
+    * */
+
+
     /**
      * This is just an example endpoint. If you want to interface with some kind of backend (like the spark stuff)
      * and give to the front end, you do so through an endpoint.
