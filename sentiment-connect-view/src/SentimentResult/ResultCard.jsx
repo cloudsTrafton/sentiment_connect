@@ -7,7 +7,7 @@ class ResultCard extends React.PureComponent {
 
     render() {
         return (
-            <Card style={{marginLeft: '100px', marginRight: '100px'}}>
+            <Card style={{marginLeft: '100px', marginRight: '100px', marginBottom: '20px'}}>
                 <Card.Header as="h5">Sentiment about {this.props.topic} in {this.props.subreddit}</Card.Header>
                 <Card.Body>
                     <div style={{alignItems: 'left'}}>
@@ -26,7 +26,6 @@ ResultCard.propTypes = {
     sentiment: PropTypes.string.isRequired,
     topic: PropTypes.string.isRequired,
     subreddit: PropTypes.string,
-
 };
 
 export default ResultCard;

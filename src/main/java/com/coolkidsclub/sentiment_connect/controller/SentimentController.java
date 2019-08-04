@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
-@RequestMapping("sentiment")
+@RequestMapping("reddit")
 public class SentimentController {
 
     /*
@@ -33,6 +33,10 @@ public class SentimentController {
     * https://api.pushshift.io/reddit/search/comment/?q=trump&after=7d&aggs=subreddit&&size=0
     *
     * */
+
+//    @GetMapping(value = "/comment/{search_term}/{time_period}", produces = "application/json")
+//    public void getSentimentForComments
+    // TODO not sure if we should have one or multiple endpoints, leaning towards one only...
 
 
     /**
