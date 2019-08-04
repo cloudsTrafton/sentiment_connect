@@ -1,23 +1,20 @@
 import React from 'react';
 import Card from "react-bootstrap/es/Card";
 import Navbar from "../Navigation/navbar";
+import Image from "react-bootstrap/es/Image";
+import logo from  '../sc_logo.png'
 
 class Header extends React.Component {
 
 
     render() {
         return (
-            <Card>
-                <Card.Header>
-                    Sentiment Connect
+            <Card style={{width: '100%', display: 'inline-block', alignContent: 'center'}}>
+                <Card.Header style={{padding: '10px', backgroundColor: 'white'}}>
+                    <Image src={logo}/>
+                    <h6>Real time sentiment analysis with a single click</h6>
                     <Navbar/>
                 </Card.Header>
-                <Card.Body>
-                    <Card.Title>Discover how the internet feels!</Card.Title>
-                    <Card.Text>
-                        Get insights on stuffs and things!!
-                    </Card.Text>
-                </Card.Body>
             </Card>
         );
     }
