@@ -11,32 +11,54 @@ import org.springframework.web.client.RestTemplate;
 public class SentimentController {
 
     /*
-    Submissions:
+     * REDDIT SUBMISSIONS PART 1 (no subreddit):
+     *
+     *  - URL: https://api.pushshift.io/reddit/search/submission/?q=<SEARCH_TERM&fields=subreddit,title&after=24h&size=500
+     *
+     *  - Gets all submissions containing the search term from the last 24 hours
+     *
+     *  - SEARCH_TERM: Get from the frontend text box, everything else is hardcoded url
+     *
+     *
+     * REDDIT SUBMISSIONS PART 2 (With subreddit):
+     *
+     *  - URL: https://api.pushshift.io/reddit/search/submission/?q=SEARCH_TERM&subreddit=SUB_REDDIT&fields=subreddit,title&after=24h&size=500
+     *
+     *  - Get all submissions containing the search term from the subreddit from the last 24 hours
+     *
+     *  - SEARCH_TERM: Get from the frontend text box, everything else is hardcoded url
+     *
+     *  - SUB_REDDIT: Get from frontend text box
+     *
+     *
+     * REDDIT COMMENTS (Requires a subreddit parameter!!!):
+     *
+     *  - URL: https://api.pushshift.io/reddit/search/comment/?q=SEARCH_TERM&subreddit=SUB_REDDIT&fields=subreddit,body&after=24h&size=500
+     *
+     *  - Requires both SEARCH_TERM and SUB_REDDIT params
+     *
+     *  - Get all comments containing the search term from the subreddit from the last 24 hours
+     *
+     *
+     *
+     *  REDDIT AGGREGATIONS (Both Submissions and Comments)
+     *
+     *  - URL (Submissions): https://api.pushshift.io/reddit/search/submission/?q=SEARCH_TERM&aggs=subreddit&frequency=FREQ&after=TIME_FRAME&size=0
+     *
+     *  - URL (Comments): https://api.pushshift.io/reddit/search/comment/?q=SEARCH_TERM&aggs=subreddit&frequency=FREQ&after=TIME_FRAME&size=0
+     *
+     *  - Gets Counts of Submissions or Comments that mention the search term in each Subreddit for the frequency provided
+     *
+     *  - FREQ: how many submissions/comments were posted per FREQ
+     *    (minute, hour, day, week, month, year maybe just a drop down menu for these options)
+     *
+     *  - TIME_FRAME: Look back time (s, m, h, d + some number ie. 30d for 30 days)
+     *
+     *  - Probably should limit Time frame so like 100y doesn't mess up
+     *
+     *
+     */
 
-    after = Epoch value or Integer + "s,m,h,d" (i.e. 30d for 30 days)
-
-    Ex: https://api.pushshift.io/reddit/search/submission/?q=amazon&after=24h&size=500&fields=title,subreddit
-    EX with r/ : https://api.pushshift.io/reddit/search/submission/?q=amazon&after=24h&size=500&fields=title,subreddit&subreddit=SUB
-
-    */
-
-    /*
-    Comments: (MUST REQUIRE A SUB-REDDIT
-
-    Ex: https://api.pushshift.io/reddit/search/comment/?q=amazon&subreddit=SUB&after=24h&size=500&fields=title,subreddit
-
-
-
-    */
-
-    /*
-    * https://api.pushshift.io/reddit/search/comment/?q=trump&after=7d&aggs=subreddit&&size=0
-    *
-    * */
-
-//    @GetMapping(value = "/comment/{search_term}/{time_period}", produces = "application/json")
-//    public void getSentimentForComments
-    // TODO not sure if we should have one or multiple endpoints, leaning towards one only...
 
 
     /**
