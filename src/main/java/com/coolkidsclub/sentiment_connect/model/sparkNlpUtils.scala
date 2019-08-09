@@ -1,6 +1,7 @@
 package com.coolkidsclub.sentiment_connect.model
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.ml.PipelineModel
 import org.apache.spark.sql.functions.{col, current_timestamp, desc, explode, mean, monotonically_increasing_id, sum, when}
 
 // trait to hold the spark session
@@ -11,8 +12,8 @@ trait sparkNlpSessionWrapper {
 
 // Trait to hold the NLP models/pipelines
 trait sparkNlpWrapper {
-  final val entityModelPath: String = "/Users/briankalinowski/IdeaProjects/ScalaSparkPlaygroud/src/NLP_pretrained/recognize_entities_dl_en_2.1.0_2.4_1562946909722"
-  final val sentimentModelPath: String = "/Users/briankalinowski/IdeaProjects/ScalaSparkPlaygroud/src/NLP_pretrained/analyze_sentiment_en_2.1.0_2.4_1563204637489"
+  final val entityModelPath: String = "/Users/briankalinowski/Desktop/sentiment_connect/src/main/java/com/coolkidsclub/sentiment_connect/NLP_Trained_Models/recognize_entities_dl_en_2.1.0_2.4_1562946909722"
+  final val sentimentModelPath: String = "/Users/briankalinowski/Desktop/sentiment_connect/src/main/java/com/coolkidsclub/sentiment_connect/NLP_Trained_Models/analyze_sentiment_en_2.1.0_2.4_1563204637489"
   lazy val NERPipeline: PipelineModel = PipelineModel.load(this.entityModelPath)
   lazy val sentimentPipeLine: PipelineModel = PipelineModel.load(this.sentimentModelPath)
 }
