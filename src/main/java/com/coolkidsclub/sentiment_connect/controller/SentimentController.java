@@ -1,5 +1,9 @@
 package com.coolkidsclub.sentiment_connect.controller;
+import com.coolkidsclub.sentiment_connect.model.PushshiftEndpoints;
 import com.coolkidsclub.sentiment_connect.model.RedditPostData;
+import com.coolkidsclub.sentiment_connect.model.SparkNlpDataProcessing;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,11 +60,9 @@ public class SentimentController {
      *
      *  - Probably should limit Time frame so like 100y doesn't mess up
      *
-     *
      */
 
-
-
+    
     /**
      * This is just an example endpoint. If you want to interface with some kind of backend (like the spark stuff)
      * and give to the front end, you do so through an endpoint.
@@ -70,11 +72,30 @@ public class SentimentController {
      */
     @GetMapping(value = "/get/{subreddit}/{search_term}", produces = "application/json")
     public void getSentimentFromTopicAndSubreddit(@PathVariable String subreddit, @PathVariable String search_term) {
+
+
+
         RestTemplate restTemplate = new RestTemplate();
         RedditPostData redditPostData =
                 restTemplate.getForObject("https://api.pushshift.io/reddit/search/submission/?q=" + search_term, RedditPostData.class);
 
         System.out.println(redditPostData);
+
+
+        // Scala Case Classes can be used just like regular Java ones! 
+
+        // pushshift URL class:
+        String submissionString = new PushshiftEndpoints().getSubmissionsURLv2(search_term, subreddit);
+
+        // This should work for processing the JSON as a STRING
+        // S = Submissions data, C = Comments, Todo ill change this because we can just have them in different methods
+        
+        SparkNlpDataProcessing sparkProcessor = new SparkNlpDataProcessing("", "S");
+
+        // Java way of getting the NLP stuffs 
+        Dataset<Row> NLPData = sparkProcessor.getNLPData();
+        
+        Dataset<Row> fullData = sparkProcessor.getProcessedData();
 
     }
 
