@@ -7,7 +7,8 @@
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
     "react-bootstrap": "latest",
-    "prop-types": "latest"
+    "prop-types": "latest",
+    "keymirror": "latest"
   },
   "scripts": {
     "start": "react-scripts start",

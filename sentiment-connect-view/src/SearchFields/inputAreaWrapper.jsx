@@ -13,8 +13,8 @@ class InputAreaWrapper extends React.Component {
 
     render() {
         return (
-            <Accordion defaultActiveKey="0">
-                <Card>
+            <Accordion defaultActiveKey="0" style={{marginBottom: '50px'}}>
+                <Card style={{marginBottom: '50px'}}>
                     <Card.Header>
                         <Accordion.Toggle as={Button} variant="link" eventKey="0" style={{align: 'right'}}>
                             Toggle Open
