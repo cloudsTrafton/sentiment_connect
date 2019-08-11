@@ -8,7 +8,8 @@
     "react-scripts": "3.0.1",
     "react-bootstrap": "latest",
     "prop-types": "latest",
-    "keymirror": "latest"
+    "keymirror": "latest",
+    "react-router-dom": "latest"
   },
   "scripts": {
     "start": "react-scripts start",
