@@ -21,7 +21,22 @@ class SearchArea extends React.PureComponent {
         };
 
     handleDropdownSelect = (event) => {
+        // TODO
+    };
 
+    /**
+     * Validate the input form based on requirements.
+     * @returns {boolean}
+     */
+    validateInput = () => {
+        let isValidInput = true;
+        if (this.state.subreddit === '' || this.state.subreddit === undefined) {
+            isValidInput = false;
+        }
+        if (this.state.searchTerm === '' || this.state.searchTerm === undefined) {
+            isValidInput = false;
+        }
+        return isValidInput;
     };
 
     /**
@@ -30,9 +45,15 @@ class SearchArea extends React.PureComponent {
      */
     handleSubmission = (event) => {
         // TODO
-        console.log("Yay submitted the following: ");
-        console.log(this.state);
-        getSentimentFromSearchTermSubreddit(this.state.subreddit, this.state.searchTerm);
+        let isValidInput = this.validateInput();
+        if (!isValidInput) {
+            // TODO show some red outline or something and some kind of message saying the
+            // input was bad.
+        } else {
+            console.log("Yay submitted the following: ");
+            console.log(this.state);
+            getSentimentFromSearchTermSubreddit(this.state.subreddit, this.state.searchTerm);
+        }
     };
 
     render() {
