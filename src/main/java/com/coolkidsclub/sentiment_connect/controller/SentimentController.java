@@ -3,6 +3,7 @@ import com.coolkidsclub.sentiment_connect.service.i.RedditService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RestController
 @RequestMapping("reddit")
 public class SentimentController {
@@ -12,18 +13,18 @@ public class SentimentController {
 
 
 
-//         * REDDIT SUBMISSIONS PART 1 (no subreddit):
-//            *
-//            *  - URL: https://api.pushshift.io/reddit/search/submission/?q=<SEARCH_TERM&fields=subreddit,title&after=24h&size=500
-//            *
-//            *  - Gets all submissions containing the search term from the last 24 hours
-//     *
-//             *  - SEARCH_TERM: Get from the frontend text box, everything else is hardcoded url
-
-    @GetMapping(value = "/get/submissions", produces = "application/json")
-    public String getSentimentFromSearchTermSiteWide(@RequestParam String searchTerm) {
-        return redditService.getSiteDataFromSubmission(searchTerm);
-    }
+////         * REDDIT SUBMISSIONS PART 1 (no subreddit):
+////            *
+////            *  - URL: https://api.pushshift.io/reddit/search/submission/?q=<SEARCH_TERM&fields=subreddit,title&after=24h&size=500
+////            *
+////            *  - Gets all submissions containing the search term from the last 24 hours
+////     *
+////             *  - SEARCH_TERM: Get from the frontend text box, everything else is hardcoded url
+//
+//    @GetMapping(value = "/get/submissions", produces = "application/json")
+//    public String getSentimentFromSearchTermSiteWide(@RequestParam String searchTerm) {
+//        return redditService.getSiteDataFromSubmission(searchTerm);
+//    }
 
     /*
      *
@@ -40,6 +41,7 @@ public class SentimentController {
 //    */
     @GetMapping(value = "/get/submissions/{subreddit}", produces = "application/json")
     public String getSentimentFromSearchTermSubreddit(@PathVariable String subreddit, @RequestParam String searchTerm) {
+        // TODO call the sentiment engine and get data back after this has been parsed into the correct data.
         return redditService.getSubRedditDataFromSubmission(subreddit, searchTerm);
     }
 
@@ -56,6 +58,7 @@ public class SentimentController {
      */
     @GetMapping(value = "/get/comments/{subreddit}", produces = "application/json")
     public String getSentimentFromSearchTermSubredditComments(@PathVariable String subreddit, @RequestParam String searchTerm) {
+        // TODO call the sentiment engine and get data back after this has been parsed into the correct data.
         return redditService.getSubredditDataFromComments(searchTerm, subreddit);
     }
 
@@ -81,6 +84,7 @@ public class SentimentController {
     public String getSearchTermAggregatedCounts(@RequestParam String searchTerm,
                                                 @RequestParam String frequency,
                                                 @RequestParam String timeFrame) {
+        // TODO call the sentiment engine and get data back after this has been parsed into the correct data.
         return redditService.getSubredditAggregatedCounts(searchTerm, frequency, timeFrame);
     }
 }

@@ -5,12 +5,10 @@ package com.coolkidsclub.sentiment_connect.service.i;
  */
 public interface RedditService {
 
-    public String getSiteDataFromSubmission(String searchTerm);
+    String getSubRedditDataFromSubmission(String searchTerm, String subreddit);
 
-    public String getSubRedditDataFromSubmission(String searchTerm, String subreddit);
+    String getSubredditDataFromComments(String searchTerm, String subreddit);
 
-    public String getSubredditDataFromComments(String searchTerm, String subreddit);
-
-    public String getSubredditAggregatedCounts(String searchTerm, String frequency, String timeFrame);
+    String getSubredditAggregatedCounts(String searchTerm, String frequency, String timeFrame);
 
 }

@@ -4,7 +4,7 @@ import Row from "react-bootstrap/es/Row";
 import Col from "react-bootstrap/es/Col";
 import DropdownButton from "react-bootstrap/es/DropdownButton";
 import Dropdown from "react-bootstrap/es/Dropdown"
-import keyMirror from "keymirror";
+import {getSentimentFromSearchTermSubreddit} from "../ServiceCalls/AjaxCalls";
 
 class SearchArea extends React.PureComponent {
 
@@ -32,6 +32,7 @@ class SearchArea extends React.PureComponent {
         // TODO
         console.log("Yay submitted the following: ");
         console.log(this.state);
+        getSentimentFromSearchTermSubreddit(this.state.subreddit, this.state.searchTerm);
     };
 
     render() {
