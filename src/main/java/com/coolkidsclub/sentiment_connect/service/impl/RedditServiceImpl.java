@@ -1,10 +1,13 @@
 package com.coolkidsclub.sentiment_connect.service.impl;
 
 
+import com.coolkidsclub.sentiment_connect.controller.AwsS3Utils;
 import com.coolkidsclub.sentiment_connect.model.PushshiftEndpoints;
 import com.coolkidsclub.sentiment_connect.service.i.RedditService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
 
 /**
  * Provides service for interacting with the PushShift Reddit API
@@ -12,11 +15,19 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class RedditServiceImpl implements RedditService {
 
+    private AwsS3Utils awsS3Utils = new AwsS3Utils();
+
     @Override
     public String getSubRedditDataFromSubmission(String searchTerm, String subreddit) {
         RestTemplate restTemplate = new RestTemplate();
-        String pushShiftendPoint = PushshiftEndpoints.apply().getSubmissionsURLv2(searchTerm, subreddit);
-        return restTemplate.getForObject(pushShiftendPoint, String.class);
+        String pushShiftEndPoint = PushshiftEndpoints.apply().getSubmissionsURL(searchTerm, subreddit);
+        String result = restTemplate.getForObject(pushShiftEndPoint, String.class);
+
+
+        // Todo Testing the S3 file upload
+        this.awsS3Utils.loadSubmissionData(result);
+        return result;
+
     }
 
     @Override

@@ -2,11 +2,7 @@ package com.coolkidsclub.sentiment_connect.model
 
 case class PushshiftEndpoints() {
 
-  def getSubmissionsURLv1(searchTerm: String): String = {
-    s"https://api.pushshift.io/reddit/search/submission/?q=$searchTerm&fields=subreddit,title&after=24h&size=500"
-  }
-
-  def getSubmissionsURLv2(searchTerm: String, subReddit: String): String = {
+  def getSubmissionsURL(searchTerm: String, subReddit: String): String = {
     s"https://api.pushshift.io/reddit/search/submission/?q=$searchTerm&subreddit=$subReddit&fields=subreddit,title&after=24h&size=500"
   }
 
