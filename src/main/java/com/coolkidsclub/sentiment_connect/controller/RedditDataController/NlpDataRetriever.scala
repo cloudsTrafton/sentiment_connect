@@ -3,7 +3,7 @@ package com.coolkidsclub.sentiment_connect.controller.RedditDataController
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.col
 
-object NlpDataRetriever extends SparkSessionWrapper {
+object NlpDataRetriever extends SparkSessionWrapper with App {
 
   // S3 locations
   private final val submissionsS3Bucket = "s3a://reddit-data-sentiment-connect/sentiment-data-output/submissions_processed/reddit_submissions_NLP"
@@ -24,5 +24,8 @@ object NlpDataRetriever extends SparkSessionWrapper {
       .json(this.submissionsS3Bucket).toDF()
       .where(col("named_entities").rlike(searchTerm) && col("subreddit") === subReddit)
   }
+
+  val test = getCommentsData("Trump","politics")
+  test.show()
 
 }
