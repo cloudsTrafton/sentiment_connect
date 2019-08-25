@@ -14,7 +14,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
       .option("inferSchema", value = true)
       .option("header", value = true)
       .json(this.commentsS3Bucket).toDF()
-      .where(col("named_entities").rlike(searchTerm) && col("subreddit") === "politics")
+      .where(col("named_entities").rlike(searchTerm) && col("subreddit") === subReddit)
   }
 
   def getSubmissionsData(searchTerm: String, subReddit: String): DataFrame = {
