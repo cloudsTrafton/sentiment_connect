@@ -19,7 +19,7 @@ trait SparkSessionWrapper {
     .getOrCreate()
 
   // Spark config stuffs
-  //this.sparkSession.sparkContext.setLogLevel("WARN")
+  this.sparkSession.sparkContext.setLogLevel("WARN")
   this.sparkSession.sparkContext.hadoopConfiguration.set("fs.s3a.access.key", access_key)
   this.sparkSession.sparkContext.hadoopConfiguration.set("fs.s3a.secret.key", secret_key)
 
