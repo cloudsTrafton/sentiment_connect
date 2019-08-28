@@ -14,7 +14,7 @@ object NlpDataRetriever extends SparkSessionWrapper with App {
       .option("inferSchema", value = true)
       .option("header", value = true)
       .json(this.commentsS3Bucket).toDF()
-      .where(col("named_entities").rlike(searchTerm) && col("subreddit") === subReddit)
+      .where(col(colName = "named_entities").rlike(searchTerm) && col(colName = "subreddit") === subReddit)
   }
 
   def getSubmissionsData(searchTerm: String, subReddit: String): DataFrame = {
@@ -22,7 +22,7 @@ object NlpDataRetriever extends SparkSessionWrapper with App {
       .option("inferSchema", value = true)
       .option("header", value = true)
       .json(this.submissionsS3Bucket).toDF()
-      .where(col("named_entities").rlike(searchTerm) && col("subreddit") === subReddit)
+      .where(col(colName = "named_entities").rlike(searchTerm) && col(colName = "subreddit") === subReddit)
   }
 
   val test = getCommentsData("Trump","politics")

@@ -1,6 +1,5 @@
 package com.coolkidsclub.sentiment_connect.controller.RedditDataController
 
-import scala.io.BufferedSource
 
 object PushShiftEndpoints {
 
@@ -29,6 +28,7 @@ object PushShiftEndpoints {
 object PushShiftJsonUtils {
 
   import scala.io.Source
+  import scala.io.BufferedSource
 
   def downloadSubmissionsJson(searchTerm: String, subReddit: String): String = {
     val pushShiftURL: String = PushShiftEndpoints.getSubmissionsURL(searchTerm, subReddit)

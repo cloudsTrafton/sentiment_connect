@@ -1,7 +1,10 @@
 package com.coolkidsclub.sentiment_connect.controller.RedditDataController
 
+
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import org.apache.spark.sql.SparkSession
+import org.apache.log4j.{Level, Logger}
+
 
 trait SparkSessionWrapper {
 
@@ -19,8 +22,11 @@ trait SparkSessionWrapper {
     .getOrCreate()
 
   // Spark config stuffs
-  this.sparkSession.sparkContext.setLogLevel("WARN")
+  Logger.getLogger("org").setLevel(Level.ERROR)
+  Logger.getLogger("akka").setLevel(Level.ERROR)
+
   this.sparkSession.sparkContext.hadoopConfiguration.set("fs.s3a.access.key", access_key)
   this.sparkSession.sparkContext.hadoopConfiguration.set("fs.s3a.secret.key", secret_key)
+  this.sparkSession.sparkContext.hadoopConfiguration.set("fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem ")
 
 }
