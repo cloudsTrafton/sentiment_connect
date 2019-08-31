@@ -13,7 +13,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
   private final val submissionParams = "s3a://reddit-data-sentiment-connect/submission-parameters"
   private final val commentParams = "s3a://reddit-data-sentiment-connect/comment-parameters"
 
-  // CurrentData Parameters
+  // Current Data Parameters
   private var currentSubmissionParams: Seq[(String, String)] = this.getCommentParams
   private var currentCommentsParams: Seq[(String, String)] = this.getCommentParams
 
@@ -27,7 +27,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
       .json(this.commentsS3Bucket).toDF()
       .where(col(colName = "named_entities").rlike(searchTerm) && col(colName = "subreddit") === subReddit)
 
-    val formattedData = rawNlpData.rdd.collect().map(row => {
+    val formattedData: Array[RedditNlpObject] = rawNlpData.rdd.collect().map(row => {
       RedditNlpObject(
         entityType = row(0).toString,
         loadTime = row(1).toString,
@@ -51,7 +51,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
       .json(this.submissionsS3Bucket).toDF()
       .where(col(colName = "named_entities").rlike(searchTerm) && col(colName = "subreddit") === subReddit)
 
-    val formattedData = rawNlpData.rdd.collect().map(row => {
+    val formattedData: Array[RedditNlpObject] = rawNlpData.rdd.collect().map(row => {
       RedditNlpObject(
         entityType = row(0).toString,
         loadTime = row(1).toString,
@@ -88,7 +88,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
   private def reloadSubmissionParams(searchTerm: String, subReddit: String): Unit = {
     import sparkSession.implicits._
     val combinedParams: Seq[(String, String)] = this.currentSubmissionParams ++ Seq((searchTerm, subReddit))
-    val dataParams = combinedParams.toDF
+    val dataParams: DataFrame = combinedParams.toDF
 
     // Overwrite and save new submissions parameters
     println("Reloading Submission Parameters")
@@ -104,7 +104,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
   private def reloadCommentParams(searchTerm: String, subReddit: String): Unit = {
     import sparkSession.implicits._
     val combinedParams: Seq[(String, String)] = this.currentSubmissionParams ++ Seq((searchTerm, subReddit))
-    val dataParams = combinedParams.toDF
+    val dataParams: DataFrame = combinedParams.toDF
 
     // Overwrite and save new submissions parameters
     println("Reloading Comment Parameters")
