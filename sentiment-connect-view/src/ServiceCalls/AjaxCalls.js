@@ -18,6 +18,7 @@ const reddit_get_context_path = "/reddit/get/";
  */
 export function getSentimentFromSearchTermSubreddit(subreddit, searchTerm) {
     let res = '';
+    const endpoint =
     axios.get(local_path + reddit_get_context_path + "submissions/" + subreddit, {
         params: {'searchTerm': searchTerm},
         headers: {"Access-Control-Allow-Origin": "*"}
@@ -26,6 +27,29 @@ export function getSentimentFromSearchTermSubreddit(subreddit, searchTerm) {
         .catch(error => {
             console.log(error)
         });
+    return res
+}
+
+/**
+ * Calls endpoint to get all subreddits in which the search term appears.
+ * @param searchTerm
+ * @param frequency
+ * @param timeFrame
+ * @returns {string}
+ */
+export function getSubRedditsForSearchTerm(searchTerm, frequency, timeFrame) {
+    let res = '';
+    axios.get(local_path + reddit_get_context_path + "subreddits", {
+        params: {'searchTerm': searchTerm,
+                 'frequency': frequency,
+                 'timeFrame': timeFrame},
+        headers: {"Access-Control-Allow-Origin": "*"}
+    })
+        .then(response => (res = response.data.data))
+        .catch(error => {
+            console.log(error)
+        });
+    console.log(res);
     return res
 }
 
