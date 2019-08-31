@@ -80,11 +80,11 @@ public class SentimentController {
      *  - Probably should limit Time frame so like 100y doesn't mess up
      */
 
-    @GetMapping(value = "/get/aggregation", produces = "application/json")
-    public String getSearchTermAggregatedCounts(@RequestParam String searchTerm,
-                                                @RequestParam String frequency,
-                                                @RequestParam String timeFrame) {
+    @GetMapping(value = "/get/subreddits", produces = "application/json")
+    public String getSubredditsForSearchTerm(@RequestParam String searchTerm,
+                                             @RequestParam String frequency,
+                                             @RequestParam String timeFrame) {
         // TODO call the sentiment engine and get data back after this has been parsed into the correct data.
-        return redditService.getSubredditAggregatedCounts(searchTerm, frequency, timeFrame);
+        return redditService.getSubredditsForSearchTerm(searchTerm, frequency, timeFrame);
     }
 }

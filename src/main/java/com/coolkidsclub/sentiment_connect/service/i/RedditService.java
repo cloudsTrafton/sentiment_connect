@@ -9,6 +9,6 @@ public interface RedditService {
 
     String getSubredditDataFromComments(String searchTerm, String subreddit);
 
-    String getSubredditAggregatedCounts(String searchTerm, String frequency, String timeFrame);
+    String getSubredditsForSearchTerm(String searchTerm, String frequency, String timeFrame);
 
 }

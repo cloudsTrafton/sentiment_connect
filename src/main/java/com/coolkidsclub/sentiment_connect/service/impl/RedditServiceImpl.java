@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Provides service for interacting with the PushShift Reddit API
  */
+
 @Service
 public class RedditServiceImpl implements RedditService {
 
@@ -28,16 +29,9 @@ public class RedditServiceImpl implements RedditService {
     }
 
     @Override
-    public String getSubredditAggregatedCounts(String searchTerm, String frequency, String timeFrame) {
+    public String getSubredditsForSearchTerm(String searchTerm, String frequency, String timeFrame) {
         RestTemplate restTemplate = new RestTemplate();
         String submissionendPoint = PushShiftEndpoints.getSubmissionsAggregation(searchTerm, frequency, timeFrame);
-        String commentsEndPoint = PushShiftEndpoints.getCommentsAggregation(searchTerm, frequency, timeFrame);
-
-        String submissionAggData =
-                restTemplate.getForObject(submissionendPoint, String.class);
-
-        String commentsAggData =
-                restTemplate.getForObject(commentsEndPoint, String.class);
-        return submissionAggData + commentsAggData;
+        return restTemplate.getForObject(submissionendPoint, String.class);
     }
 }
