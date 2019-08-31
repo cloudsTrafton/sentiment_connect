@@ -13,6 +13,6 @@ object DataTesting extends App {
     new Timestamp(dateFormat.parse(obj.loadTime).getTime)
   })
 
-  mapTest.foreach(println)
+  submissionsTest.foreach(obj => println(obj.entityType))
 
 }

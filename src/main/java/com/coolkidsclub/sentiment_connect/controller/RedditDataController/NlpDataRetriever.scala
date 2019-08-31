@@ -65,6 +65,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
     formattedData
   }
 
+  // Call this first to check for submissions data
   def checkSubmissionParams(searchTerm: String, subReddit: String): Boolean = {
     val dataCheck: Boolean = this.currentSubmissionParams.contains((searchTerm, subReddit))
     if (!dataCheck) {
@@ -73,6 +74,8 @@ object NlpDataRetriever extends SparkSessionWrapper {
     dataCheck
   }
 
+
+  // Call this first for check for comments data
   def checkCommentParams(searchTerm: String, subReddit: String): Boolean = {
     val dataCheck: Boolean = this.currentCommentsParams.contains((searchTerm, subReddit))
     if (!dataCheck) {
