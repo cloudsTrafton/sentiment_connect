@@ -1,6 +1,6 @@
 package com.coolkidsclub.sentiment_connect.controller.RedditDataController
 
-import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.functions.{col, desc}
 import org.apache.spark.sql.{DataFrame, SaveMode}
 
 object NlpDataRetriever extends SparkSessionWrapper {
@@ -65,6 +65,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
     formattedData
   }
 
+
   // Call this first to check for submissions data
   def checkSubmissionParams(searchTerm: String, subReddit: String): Boolean = {
     val dataCheck: Boolean = this.currentSubmissionParams.contains((searchTerm, subReddit))
@@ -85,6 +86,26 @@ object NlpDataRetriever extends SparkSessionWrapper {
   }
 
 
+  // Method to get the full submissions data (for testing)
+  def getSubmissionDataFull: DataFrame = {
+    this.sparkSession.read
+      .option("inferSchema", value = true)
+      .option("header", value = true)
+      .json(this.submissionsS3Bucket).toDF()
+      .orderBy(desc(columnName = "load_ts"))
+  }
+
+
+  // Method to get the full comment data (for testing)
+  def getCommentDataFull: DataFrame = {
+    this.sparkSession.read
+      .option("inferSchema", value = true)
+      .option("header", value = true)
+      .json(this.commentsS3Bucket).toDF()
+      .orderBy(desc(columnName = "load_ts"))
+  }
+
+
   private def reloadSubmissionParams(searchTerm: String, subReddit: String): Unit = {
     import sparkSession.implicits._
     val combinedParams: Seq[(String, String)] = this.currentSubmissionParams ++ Seq((searchTerm, subReddit))
@@ -97,6 +118,8 @@ object NlpDataRetriever extends SparkSessionWrapper {
       .option("header", "true")
       .save(this.submissionParamsPath)
     println(s"Saved New Submission Parameter: $searchTerm, r/$subReddit")
+
+    // Reset current submission parameters
     this.currentSubmissionParams = this.getSubmissionParams
   }
 
@@ -113,6 +136,8 @@ object NlpDataRetriever extends SparkSessionWrapper {
       .option("header", "true")
       .save(this.commentParamsPath)
     println(s"Saved New Comment Parameter: $searchTerm, r/$subReddit")
+
+    // Reset current comment parameters
     this.currentCommentsParams = this.getCommentParams
   }
 
