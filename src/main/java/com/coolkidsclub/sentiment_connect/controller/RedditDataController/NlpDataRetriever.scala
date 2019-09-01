@@ -1,6 +1,6 @@
 package com.coolkidsclub.sentiment_connect.controller.RedditDataController
 
-import org.apache.spark.sql.functions.col
+import org.apache.spark.sql.functions.{col, desc}
 import org.apache.spark.sql.{DataFrame, SaveMode}
 
 object NlpDataRetriever extends SparkSessionWrapper {
@@ -10,10 +10,10 @@ object NlpDataRetriever extends SparkSessionWrapper {
   private final val commentsS3Bucket = "s3a://reddit-data-sentiment-connect/sentiment-data-output/comments_processed/reddit_comments_NLP"
 
   // S3 search terms/subreddits params for data collection
-  private final val submissionParams = "s3a://reddit-data-sentiment-connect/submission-parameters"
-  private final val commentParams = "s3a://reddit-data-sentiment-connect/comment-parameters"
+  private final val submissionParamsPath = "s3a://reddit-data-sentiment-connect/submission-parameters"
+  private final val commentParamsPath = "s3a://reddit-data-sentiment-connect/comment-parameters"
 
-  // CurrentData Parameters
+  // Current Data Parameters
   private var currentSubmissionParams: Seq[(String, String)] = this.getCommentParams
   private var currentCommentsParams: Seq[(String, String)] = this.getCommentParams
 
@@ -27,7 +27,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
       .json(this.commentsS3Bucket).toDF()
       .where(col(colName = "named_entities").rlike(searchTerm) && col(colName = "subreddit") === subReddit)
 
-    val formattedData = rawNlpData.rdd.collect().map(row => {
+    val formattedData: Array[RedditNlpObject] = rawNlpData.rdd.collect().map(row => {
       RedditNlpObject(
         entityType = row(0).toString,
         loadTime = row(1).toString,
@@ -51,7 +51,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
       .json(this.submissionsS3Bucket).toDF()
       .where(col(colName = "named_entities").rlike(searchTerm) && col(colName = "subreddit") === subReddit)
 
-    val formattedData = rawNlpData.rdd.collect().map(row => {
+    val formattedData: Array[RedditNlpObject] = rawNlpData.rdd.collect().map(row => {
       RedditNlpObject(
         entityType = row(0).toString,
         loadTime = row(1).toString,
@@ -64,6 +64,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
     })
     formattedData
   }
+
 
   // Call this first to check for submissions data
   def checkSubmissionParams(searchTerm: String, subReddit: String): Boolean = {
@@ -85,18 +86,40 @@ object NlpDataRetriever extends SparkSessionWrapper {
   }
 
 
+  // Method to get the full submissions data (for testing)
+  def getSubmissionDataFull: DataFrame = {
+    this.sparkSession.read
+      .option("inferSchema", value = true)
+      .option("header", value = true)
+      .json(this.submissionsS3Bucket).toDF()
+      .orderBy(desc(columnName = "load_ts"))
+  }
+
+
+  // Method to get the full comment data (for testing)
+  def getCommentDataFull: DataFrame = {
+    this.sparkSession.read
+      .option("inferSchema", value = true)
+      .option("header", value = true)
+      .json(this.commentsS3Bucket).toDF()
+      .orderBy(desc(columnName = "load_ts"))
+  }
+
+
   private def reloadSubmissionParams(searchTerm: String, subReddit: String): Unit = {
     import sparkSession.implicits._
     val combinedParams: Seq[(String, String)] = this.currentSubmissionParams ++ Seq((searchTerm, subReddit))
-    val dataParams = combinedParams.toDF
+    val dataParams: DataFrame = combinedParams.toDF
 
     // Overwrite and save new submissions parameters
     println("Reloading Submission Parameters")
     dataParams.coalesce(numPartitions = 1).write.mode(SaveMode.Overwrite)
       .format(source = "csv")
       .option("header", "true")
-      .save(this.submissionParams)
+      .save(this.submissionParamsPath)
     println(s"Saved New Submission Parameter: $searchTerm, r/$subReddit")
+
+    // Reset current submission parameters
     this.currentSubmissionParams = this.getSubmissionParams
   }
 
@@ -104,15 +127,17 @@ object NlpDataRetriever extends SparkSessionWrapper {
   private def reloadCommentParams(searchTerm: String, subReddit: String): Unit = {
     import sparkSession.implicits._
     val combinedParams: Seq[(String, String)] = this.currentSubmissionParams ++ Seq((searchTerm, subReddit))
-    val dataParams = combinedParams.toDF
+    val dataParams: DataFrame = combinedParams.toDF
 
     // Overwrite and save new submissions parameters
     println("Reloading Comment Parameters")
     dataParams.coalesce(numPartitions = 1).write.mode(SaveMode.Overwrite)
       .format(source = "csv")
       .option("header", "true")
-      .save(this.commentParams)
+      .save(this.commentParamsPath)
     println(s"Saved New Comment Parameter: $searchTerm, r/$subReddit")
+
+    // Reset current comment parameters
     this.currentCommentsParams = this.getCommentParams
   }
 
@@ -121,7 +146,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
     this.sparkSession.read
       .option("inferSchema", value = true)
       .option("header", value = true)
-      .csv(this.submissionParams)
+      .csv(this.submissionParamsPath)
       .rdd.map(param => (param(0).toString, param(1).toString)).collect().toSeq
   }
 
@@ -130,7 +155,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
     this.sparkSession.read
       .option("inferSchema", value = true)
       .option("header", value = true)
-      .csv(this.commentParams)
+      .csv(this.commentParamsPath)
       .rdd.map(param => (param(0).toString, param(1).toString)).collect().toSeq
   }
 
