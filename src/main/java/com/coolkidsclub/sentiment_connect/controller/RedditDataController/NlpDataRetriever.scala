@@ -10,8 +10,8 @@ object NlpDataRetriever extends SparkSessionWrapper {
   private final val commentsS3Bucket = "s3a://reddit-data-sentiment-connect/sentiment-data-output/comments_processed/reddit_comments_NLP"
 
   // S3 search terms/subreddits params for data collection
-  private final val submissionParams = "s3a://reddit-data-sentiment-connect/submission-parameters"
-  private final val commentParams = "s3a://reddit-data-sentiment-connect/comment-parameters"
+  private final val submissionParamsPath = "s3a://reddit-data-sentiment-connect/submission-parameters"
+  private final val commentParamsPath = "s3a://reddit-data-sentiment-connect/comment-parameters"
 
   // Current Data Parameters
   private var currentSubmissionParams: Seq[(String, String)] = this.getCommentParams
@@ -95,7 +95,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
     dataParams.coalesce(numPartitions = 1).write.mode(SaveMode.Overwrite)
       .format(source = "csv")
       .option("header", "true")
-      .save(this.submissionParams)
+      .save(this.submissionParamsPath)
     println(s"Saved New Submission Parameter: $searchTerm, r/$subReddit")
     this.currentSubmissionParams = this.getSubmissionParams
   }
@@ -111,7 +111,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
     dataParams.coalesce(numPartitions = 1).write.mode(SaveMode.Overwrite)
       .format(source = "csv")
       .option("header", "true")
-      .save(this.commentParams)
+      .save(this.commentParamsPath)
     println(s"Saved New Comment Parameter: $searchTerm, r/$subReddit")
     this.currentCommentsParams = this.getCommentParams
   }
@@ -121,7 +121,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
     this.sparkSession.read
       .option("inferSchema", value = true)
       .option("header", value = true)
-      .csv(this.submissionParams)
+      .csv(this.submissionParamsPath)
       .rdd.map(param => (param(0).toString, param(1).toString)).collect().toSeq
   }
 
@@ -130,7 +130,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
     this.sparkSession.read
       .option("inferSchema", value = true)
       .option("header", value = true)
-      .csv(this.commentParams)
+      .csv(this.commentParamsPath)
       .rdd.map(param => (param(0).toString, param(1).toString)).collect().toSeq
   }
 
