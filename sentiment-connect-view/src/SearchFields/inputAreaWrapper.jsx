@@ -11,13 +11,13 @@ class InputAreaWrapper extends React.Component {
         return (
                 <Card style={{marginBottom: '50px'}}>
                     <Card.Header>
+                        <Card.Title>Find Sentiment Data</Card.Title>
                     </Card.Header>
                         <Card.Body>
-                            <Card.Title>Discover Sentiments</Card.Title>
+                            <Card.Title>Step 1: Find Subreddits</Card.Title>
                             <Card.Text style={{marginLeft: '4rem', marginRight: '4rem'}}>
-                                Use the search feature's below to retrieve sentiment analysis from Reddit surrounding
-                                any topic fo your choice. Narrow or customize your search by searching within comments,
-                                original posts, or by subreddit.
+                                Use the search feature below to find a subreddits that contain posts with your search
+                                term. Then
                             </Card.Text>
                             <div align="center">
                                 <SearchArea/>
