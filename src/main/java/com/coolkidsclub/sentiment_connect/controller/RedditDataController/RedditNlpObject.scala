@@ -22,10 +22,26 @@ case class RedditNlpObject(entityType: String,
 
   // Pretty print formatting
   override def toString: String = {
-    s"${this.entityType} : ${this.loadTime} : " +
-      s"${this.entityName} : ${this.subreddit} : " +
-      s"${this.negativeConfidenceAvg} : ${this.negativeMentionCount} : " +
-      s"${this.positiveConfidenceAvg} : ${this.positiveMentionCount}"
+    s"{entityType: ${this.entityType}," +
+      s"loadTime: ${this.loadTime}," +
+      s"entityName: ${this.entityName}," +
+      s"subreddit: ${this.subreddit}," +
+      s"negativeConfidenceAvg: ${this.negativeConfidenceAvg}," +
+      s"negativeMentionCount: ${this.negativeMentionCount}," +
+      s"positiveConfidenceAvg: ${this.positiveConfidenceAvg}," +
+      s"positiveMentionCount: ${this.positiveMentionCount}}"
   }
 
+}
+
+object RedditNlpObject {
+  val DEFAULT_OBJ = new RedditNlpObject(
+    entityType = "",
+    loadTime = "2019-01-01",
+    entityName = "",
+    negativeConfidenceAvg = 0.0,
+    negativeMentionCount = 0,
+    positiveConfidenceAvg = 0.0,
+    positiveMentionCount = 0,
+    subreddit = "")
 }

@@ -14,8 +14,8 @@ object NlpDataRetriever extends SparkSessionWrapper {
   private final val commentParamsPath = "s3a://reddit-data-sentiment-connect/comment-parameters"
 
   // Current Data Parameters
-  private var currentSubmissionParams: Seq[(String, String)] = this.getCommentParams
-  private var currentCommentsParams: Seq[(String, String)] = this.getCommentParams
+  private var currentSubmissionParams: Array[(String, String)] = this.getCommentParams
+  private var currentCommentsParams: Array[(String, String)] = this.getCommentParams
 
 
   // Main function to get NLP comment Data
@@ -142,21 +142,21 @@ object NlpDataRetriever extends SparkSessionWrapper {
   }
 
 
-  private def getSubmissionParams: Seq[(String, String)] = {
+  private def getSubmissionParams: Array[(String, String)] = {
     this.sparkSession.read
       .option("inferSchema", value = true)
       .option("header", value = true)
       .csv(this.submissionParamsPath)
-      .rdd.map(param => (param(0).toString, param(1).toString)).collect().toSeq
+      .rdd.map(param => (param(0).toString, param(1).toString)).collect()
   }
 
 
-  private def getCommentParams: Seq[(String, String)] = {
+  private def getCommentParams: Array[(String, String)] = {
     this.sparkSession.read
       .option("inferSchema", value = true)
       .option("header", value = true)
       .csv(this.commentParamsPath)
-      .rdd.map(param => (param(0).toString, param(1).toString)).collect().toSeq
+      .rdd.map(param => (param(0).toString, param(1).toString)).collect()
   }
 
 }

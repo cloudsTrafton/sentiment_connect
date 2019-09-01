@@ -1,10 +1,14 @@
 package com.coolkidsclub.sentiment_connect.service.impl;
 
-
+import com.coolkidsclub.sentiment_connect.controller.RedditDataController.NlpDataRetriever;
 import com.coolkidsclub.sentiment_connect.controller.RedditDataController.PushShiftEndpoints;
+import com.coolkidsclub.sentiment_connect.controller.RedditDataController.RedditNlpObject;
 import com.coolkidsclub.sentiment_connect.service.i.RedditService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Provides service for interacting with the PushShift Reddit API
@@ -15,23 +19,31 @@ public class RedditServiceImpl implements RedditService {
 
 
     @Override
-    public String getSubRedditDataFromSubmission(String searchTerm, String subreddit) {
-        RestTemplate restTemplate = new RestTemplate();
-        String pushShiftEndPoint = PushShiftEndpoints.getSubmissionsURL(searchTerm, subreddit);
-        return restTemplate.getForObject(pushShiftEndPoint, String.class);
+    public ArrayList<RedditNlpObject> getSubmissionNlpData(String searchTerm, String subreddit) {
+        ArrayList<RedditNlpObject> nlpObjects = new ArrayList<>();
+
+        // Check if searchTerm and subreddit are in the params list
+        if (NlpDataRetriever.checkSubmissionParams(searchTerm, subreddit)) {
+            Collections.addAll(nlpObjects, NlpDataRetriever.getCommentsDataFiltered(searchTerm, subreddit));
+        } else {
+            nlpObjects.add(RedditNlpObject.DEFAULT_OBJ()); // len = 1
+        }
+        System.out.println("searchTerm = " + searchTerm + " subreddit = " + subreddit);
+        return nlpObjects;
     }
 
     @Override
-    public String getSubredditDataFromComments(String searchTerm, String subreddit) {
-        RestTemplate restTemplate = new RestTemplate();
-        String pushShiftendPoint = PushShiftEndpoints.getCommentsURL(searchTerm, subreddit);
-        return restTemplate.getForObject(pushShiftendPoint, String.class);
+    public ArrayList<RedditNlpObject> getCommentNlpData(String searchTerm, String subreddit) {
+        ArrayList<RedditNlpObject> nlpObjects = new ArrayList<>();
+
+        // Check if searchTerm and subreddit are in the params list
+        if (NlpDataRetriever.checkCommentParams(searchTerm, subreddit)) {
+            Collections.addAll(nlpObjects, NlpDataRetriever.getCommentsDataFiltered(searchTerm, subreddit));
+        } else {
+            nlpObjects.add(RedditNlpObject.DEFAULT_OBJ());  // len = 1
+        }
+        System.out.println("searchTerm = " + searchTerm + " subreddit = " + subreddit);
+        return nlpObjects;
     }
 
-    @Override
-    public String getSubredditsForSearchTerm(String searchTerm, String frequency, String timeFrame) {
-        RestTemplate restTemplate = new RestTemplate();
-        String submissionendPoint = PushShiftEndpoints.getSubmissionsAggregation(searchTerm, frequency, timeFrame);
-        return restTemplate.getForObject(submissionendPoint, String.class);
-    }
 }

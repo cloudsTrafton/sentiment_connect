@@ -1,14 +1,16 @@
 package com.coolkidsclub.sentiment_connect.service.i;
 
+import com.coolkidsclub.sentiment_connect.controller.RedditDataController.RedditNlpObject;
+
+import java.util.ArrayList;
+
 /**
  * Interface definition for reddit interactions.
  */
 public interface RedditService {
 
-    String getSubRedditDataFromSubmission(String searchTerm, String subreddit);
+    ArrayList<RedditNlpObject> getSubmissionNlpData(String searchTerm, String subreddit);
 
-    String getSubredditDataFromComments(String searchTerm, String subreddit);
-
-    String getSubredditsForSearchTerm(String searchTerm, String frequency, String timeFrame);
+    ArrayList<RedditNlpObject> getCommentNlpData(String searchTerm, String subreddit);
 
 }
