@@ -9,6 +9,13 @@ const local_path = "http://localhost:8080";
 
 const reddit_get_context_path = "/reddit/get/";
 
+const pushshiftSubmissionsContextPath = "https://api.pushshift.io/reddit/search/submission/";
+
+//https://api.pushshift.io/reddit/search/submission/?q=trump&aggs=subreddit&frequency=hour&after=400m&size=0
+
+
+//https://api.pushshift.io/reddit/search/submission/?q=trump&aggs=subreddit&frequency=hour&after=400m&size=0
+
 
 /**
  * Calls the endpoint to get sentiment information by subreddit on submissions.
@@ -37,27 +44,43 @@ export function getSentimentFromSearchTermSubreddit(subreddit, searchTerm) {
  * @param timeFrame
  * @returns {string}
  */
-export function getSubRedditsForSearchTerm(searchTerm, frequency, timeFrame) {
-    let res = '';
-    axios.get(local_path + reddit_get_context_path + "subreddits", {
-        params: {'searchTerm': searchTerm,
+export async function getSubRedditsForSearchTerm(searchTerm, frequency, timeFrame) {
+    return axios.get("https://api.pushshift.io/reddit/search/submission/", {
+        params: {'q': searchTerm,
                  'frequency': frequency,
-                 'timeFrame': timeFrame},
-        headers: {"Access-Control-Allow-Origin": "*"}
+                 'after': timeFrame,
+                 'size': 0,
+                 'aggs': 'subreddit'}
+    }).catch(error => {
+            console.log(error)
+        });
+    // let res = '';
+    // callAggsEndpoint(searchTerm, frequency, timeFrame).then(response => {
+    //     console.log(response);
+    // });
+}
+
+let callAggsEndpoint = async function(searchTerm, frequency, timeFrame) {
+    return axios.get("https://api.pushshift.io/reddit/search/submission/", {
+        params: {'q': searchTerm,
+            'frequency': frequency,
+            'after': timeFrame,
+            'size': 0,
+            'aggs': 'subreddit'}
     })
-        .then(response => (res = response.data.data))
+        .then(response => {
+            return response.data.aggs.subreddit;
+        })
         .catch(error => {
             console.log(error)
         });
-    console.log(res);
-    return res
-}
+};
 
 /**
  * Calls the endpoint to get sentiment information by subreddit on submissions.
  * @param subreddit
  * @param searchTerm
- * @returns {string}
+ * @returns {[]}
  */
 export function getSentimentFromSearchTermSubredditComments(subreddit, searchTerm) {
     let res = '';
@@ -65,11 +88,10 @@ export function getSentimentFromSearchTermSubredditComments(subreddit, searchTer
         params: {'searchTerm': searchTerm},
         headers: {"Access-Control-Allow-Origin": "*"}
     })
-        .then(response => (res = response.data.data))
+        .then(response => {return response.data})
         .catch(error => {
             console.log(error)
         });
-    return res
 }
 
 

@@ -2,10 +2,11 @@ import React from 'react';
 import {Button, DropdownItem, Form} from 'react-bootstrap'
 import Row from "react-bootstrap/es/Row";
 import Col from "react-bootstrap/es/Col";
-import {getSentimentFromSearchTermSubreddit, getSubRedditsForSearchTerm} from "../ServiceCalls/AjaxCalls";
+import {getSentimentFromSearchTermSubreddit, getSubRedditsForSearchTerm} from "../ServiceCalls/AjaxCalls.js";
 import FormControl from "react-bootstrap/FormControl";
 import DropdownButton from "react-bootstrap/es/DropdownButton";
 import Card from "react-bootstrap/Card";
+import GetSentimentForm from "./GetSentimentForm";
 
 class SearchArea extends React.PureComponent {
 
@@ -18,10 +19,11 @@ class SearchArea extends React.PureComponent {
             timeNum: 0,
             frequency: 'Select Sample Frequency',
             showSubreddits: false,
-            findSubredditsButtonPressed: false
+            findSubredditsButtonPressed: false,
+            subredditsList: []
         };
 
-        this.frequency_options = ['minute', 'hour', 'day', 'week', 'month', 'year'];
+        this.frequency_options = ['hour', 'day', 'week', 'month', 'year'];
     }
 
     /**
@@ -30,7 +32,6 @@ class SearchArea extends React.PureComponent {
      */
     handleOnChange = (event) => {
         this.setState({[event.target.id]: event.target.value},  null);
-        console.log(this.state);
         };
 
     /**
@@ -40,7 +41,6 @@ class SearchArea extends React.PureComponent {
      */
     handleTimeDropdownSelect = (event) => {
         this.setState({timeUnit: event},  null);
-        console.log(this.state);
     };
 
     /**
@@ -50,22 +50,6 @@ class SearchArea extends React.PureComponent {
      */
     handleFrequencyDropdownSelect = (event) => {
         this.setState({frequency: event},  null);
-        console.log(this.state);
-    }
-
-    /**
-     * Validate the input form based on requirements.
-     * @returns {boolean}
-     */
-    validateInput = () => {
-        let isValidInput = true;
-        if (this.state.subreddit === '' || this.state.subreddit === undefined) {
-            isValidInput = false;
-        }
-        if (this.state.searchTerm === '' || this.state.searchTerm === undefined) {
-            isValidInput = false;
-        }
-        return isValidInput;
     };
 
     /**
@@ -73,7 +57,7 @@ class SearchArea extends React.PureComponent {
      * @returns {boolean} true if the input is valid, false otherwise.
      */
     validateSubredditSearchInput = () => {
-        this.setState({findSubredditsButtonPressed: true})
+        this.setState({findSubredditsButtonPressed: true});
         let isValidInput = true;
         if (this.state.searchTerm === '' || this.state.searchTerm === undefined) {
             isValidInput = false;
@@ -88,38 +72,21 @@ class SearchArea extends React.PureComponent {
     };
 
     /**
-     * Once the user presses the button, fire off the event to submit to the backend for processing.
-     * @param event
-     */
-    handleSubmission = (event) => {
-        // TODO
-        let isValidInput = this.validateInput();
-        if (!isValidInput) {
-            // TODO show some red outline or something and some kind of message saying the
-            // input was bad.
-        } else {
-            console.log("Yay submitted the following: ");
-            console.log(this.state);
-            getSentimentFromSearchTermSubreddit(this.state.subreddit, this.state.searchTerm);
-        }
-    };
-
-    /**
      * Calls out to the service layer to retrieve all subreddits in which this search term appears.
      * @param searchTerm
      * @param frequency
      * @param timeFrame
      */
-    getPossibleSubredditsForSearchTerm = (event) => {
+    getPossibleSubredditsForSearchTerm = async (event) => {
         this.setState({findSubredditsButtonPressed: true}, null);
         if(this.validateSubredditSearchInput()) {
             const searchTerm = this.state.searchTerm;
             const frequency = this.frequency;
             const timeFrame = this.state.timeNum + this.state.timeUnit;
-            console.log(searchTerm);
-            const results = getSubRedditsForSearchTerm(searchTerm, frequency, timeFrame);
-            // TODO parse the JSON
-            this.setState({showSubreddits: true}, null);
+            let res = await getSubRedditsForSearchTerm(searchTerm, frequency, timeFrame);
+            this.setState({showSubreddits: true,
+                subredditsList: res.data.aggs.subreddit}, null);
+            return res.data.aggs.subreddit;
         }
     };
 
@@ -127,10 +94,10 @@ class SearchArea extends React.PureComponent {
      * Generates the possible options for units of time to choose from.
      */
     generateTimeOptions = () => {
-        const frequency_keys = ['m', 'h', 'd', 'w', 'm', 'y'];
+        const frequency_keys = ['h', 'd', 'w', 'm', 'y'];
         let items = [];
         for (let i = 0; i <= this.frequency_options.length; i++) {
-            items.push(<DropdownItem key={i} eventKey={frequency_keys[i]} value={frequency_keys[i]}>{this.frequency_options[i]}</DropdownItem>);
+            items.push(<DropdownItem key={i} eventKey={frequency_keys[i]} value={this.frequency_options[i]}>{this.frequency_options[i]}</DropdownItem>);
         }
         return items;
     };
@@ -147,10 +114,9 @@ class SearchArea extends React.PureComponent {
     };
 
     renderSubredditsList = () => {
-        console.log("rendering subreddit list");
         if (this.state.findSubredditsButtonPressed && this.state.showSubreddits) {
-            // TODO render a list of subreddits and form to find what you want.
-            return <div>hi</div>
+            const subreddits = this.state.subredditsList;
+            return <GetSentimentForm subreddits={subreddits} searchTerm={this.state.searchTerm}/>
         }
         else if (this.state.findSubredditsButtonPressed && !this.state.showSubreddits) {
             // Show an error if it shouldnt show the subreddits due to validation error.
