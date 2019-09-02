@@ -15,21 +15,23 @@ case class RedditNlpObject(entityType: String,
                            subreddit: String) {
 
   // Date String Formatting
+  @transient
   private val dateFormat = new SimpleDateFormat("yyyy-MM-dd")
 
   // Reformat the load_ts timestamp
   this.loadTime = new Timestamp(dateFormat.parse(this.loadTime).getTime).toString.split(" ")(0)
+  this.loadTime = this.loadTime.toString;
 
   // Pretty print formatting
   override def toString: String = {
-    s"{entityType: ${this.entityType}," +
-      s"loadTime: ${this.loadTime}," +
-      s"entityName: ${this.entityName}," +
-      s"subreddit: ${this.subreddit}," +
-      s"negativeConfidenceAvg: ${this.negativeConfidenceAvg}," +
-      s"negativeMentionCount: ${this.negativeMentionCount}," +
-      s"positiveConfidenceAvg: ${this.positiveConfidenceAvg}," +
-      s"positiveMentionCount: ${this.positiveMentionCount}}"
+    s"{entityType: ${this.entityType}, " +
+      s"loadTime: ${this.loadTime}, " +
+      s"entityName: ${this.entityName}, " +
+      s"subreddit: ${this.subreddit}, " +
+      s"negativeConfidenceAvg: ${this.negativeConfidenceAvg}, " +
+      s"negativeMentionCount: ${this.negativeMentionCount}, " +
+      s"positiveConfidenceAvg: ${this.positiveConfidenceAvg}, " +
+      s"positiveMentionCount: ${this.positiveMentionCount}} "
   }
 
 }

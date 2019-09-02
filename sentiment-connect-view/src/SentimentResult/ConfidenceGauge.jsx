@@ -10,7 +10,7 @@ class ConfidenceGauge extends React.PureComponent {
 
     render() {
         return (
-            <SimpleReactGauge percent={50} halfCircle={true} animate={true} maxWidth={200}/>
+            <SimpleReactGauge percent={this.props.percent} halfCircle={true} animate={true} maxWidth={200}/>
         );
     }
 

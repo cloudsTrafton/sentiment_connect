@@ -6,6 +6,7 @@ import {Button, DropdownItem, Form} from "react-bootstrap";
 import Row from "react-bootstrap/es/Row";
 import Col from "react-bootstrap/es/Col";
 import DropdownButton from "react-bootstrap/es/DropdownButton";
+import ResultCard from "../SentimentResult/ResultCard";
 
 class GetSentimentForm extends React.Component {
 
@@ -13,22 +14,33 @@ class GetSentimentForm extends React.Component {
         super(props);
         this.state = {
             subreddit: 'Select a Subreddit',
+            searchTerm: this.props.searchTerm,
+            searchType: 'submissions', // TODO set this above
+            searchInitiated: false,
+            sentimentResults: '',
+
         };
     }
+
+    arrAvg = (arr) => arr.reduce((a,b) => a + b, 0) / arr.length;
 
     /**
      * Once the user presses the button, fire off the event to submit to the backend for processing.
      * @param event
      */
-    handleSubmission = (event) => {
+    handleNlpDataRequest = async (event) => {
         // TODO
-        let isValidInput = this.validateInput();
+        let isValidInput = true;
+        let nlpDataResults = '';
         if (!isValidInput) {
             // TODO show some red outline or something and some kind of message saying the
             // input was bad.
         } else {
-            console.log("Yay submitted the following: ");
-            getSentimentFromSearchTermSubreddit(this.state.subreddit, this.state.searchTerm);
+            let res = await getSentimentFromSearchTermSubreddit(this.state.subreddit, this.state.searchTerm, this.state.searchType);
+            // nlpDataResults = res.data;
+            // console.log(nlpDataResults);
+            this.setState({sentimentResults: res.data,
+                                 searchInitiated: true}, null);
         }
     };
 
@@ -38,7 +50,7 @@ class GetSentimentForm extends React.Component {
      */
     validateInput = () => {
         let isValidInput = true;
-        if (this.state.subreddit === '' || this.state.subreddit === undefined) {
+        if (this.state.subreddit === 'Select a Subreddit' || this.state.subreddit === undefined) {
             isValidInput = false;
         }
         if (this.state.searchTerm === '' || this.state.searchTerm === undefined) {
@@ -52,8 +64,10 @@ class GetSentimentForm extends React.Component {
      */
     generateSubredditOptions = (subredditList) => {
         let items = [];
-        for (let i = 0; i < 25; i++) {
-            console.log(subredditList[i]);
+        const subredditListLength = subredditList.length;
+        const displayLimit = 20;
+        const subredditLimit = (subredditListLength > displayLimit) ? displayLimit : subredditListLength;
+        for (let i = 0; i < subredditLimit; i++) {
             items.push(<DropdownItem key={i} eventKey={subredditList[i].key} value={subredditList[i].key}>{subredditList[i].key}</DropdownItem>);
         }
         return items;
@@ -66,95 +80,112 @@ class GetSentimentForm extends React.Component {
         this.setState({subreddit: event},  null);
     };
 
+    aggregateSentimentData = (data) => {
+        let positiveConfidence = [], negativeConfidence = [], negativeCount = 0, positiveCount = 0;
+        for (let i = 0; i < data.length; i++) {
+            let value = data[i];
+            positiveConfidence.push(value.positiveConfidenceAvg);
+            negativeConfidence.push(value.negativeConfidenceAvg);
+            negativeCount += value.negativeMentionCount;
+            positiveCount += value.positiveMentionCount;
+            // sentimentComponents.push(<ResultCard negativeConfidence={value.negativeConfidenceAvg}
+            //                                      negativeMentionCount={value.negativeMentionCount}
+            //                                      positiveConfidence={value.positiveConfidenceAvg}
+            //                                      positiveMentionCount={value.positiveMentionCount}
+            //                                      mentionType={value.entityType} topic={value.entityName}
+            //                                     subreddit={value.subreddit}/>)
+            console.log(value);
+        }
+        return {positiveConfidenceAvg: this.arrAvg(positiveConfidence),
+                negativeConfidenceAvg: this.arrAvg(negativeConfidence),
+                positiveCount: positiveCount,
+                negativeCount: negativeCount}
+    }
+    renderSentimentData = () => {
+        console.log("render sentiment data!");
+        const results = this.state.sentimentResults;
+        const topic = this.state.searchTerm;
+        const subreddit = this.state.subreddit;
+        if (results !== '' && this.state.searchInitiated) {
+            // let sentimentComponents = [];
+            const aggregatedResults = this.aggregateSentimentData(results);
+            return (
+                <div style={{marginTop: '1rem'}}>
+                    <ResultCard negativeConfidence={aggregatedResults.negativeConfidenceAvg}
+                                negativeMentionCount={aggregatedResults.negativeCount}
+                                positiveConfidence={aggregatedResults.positiveConfidenceAvg}
+                                positiveMentionCount={aggregatedResults.positiveCount}
+                                topic={topic}
+                                subreddit={subreddit}/>
+                </div>
+            )
 
+        } else if (this.state.searchInitiated && this.state.sentimentResults === '') {
+            return (
+                <Card bg="info" text="white" style={{ width: '42rem' }}>
+                    <Card.Body>
+                        <Card.Text>
+                            Loading your sentiment data. Please be patient.
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
+            );
+        } else {
+            console.log("returning null");
+            // If we don't have anything and we are null, then we havent looked yet.
+            return null;
+        }
+    }
+
+    /**
+     * Renders the component onLoad.
+     */
     render() {
         const subreddits = this.props.subreddits;
 
         return (
-            <Card style={{marginBottom: '50px'}}>
-                <Card.Body>
-                    <Card.Title>Step 2: Get Sentiment Information</Card.Title>
-                    <Card.Text style={{marginLeft: '4rem', marginRight: '4rem'}}>
-                        Select a subreddit and click to retrieve sentiment analysis!
-                    </Card.Text>
-                    <div align="center">
-                        <Form style={{marginLeft: '100px', marginRight: '100px', marginBottom: '20px', width: '40rem'}}>
-                            <Form.Group as={Row} controlId="searchTermWrapper">
-                                <Form.Label column sm={3} style={{textAlign: 'left'}}>
-                                    Search Term
-                                </Form.Label>
-                                <Col sm={9}>
-                                    <Form.Control plaintext readonly id="searchTerm" defaultValue={this.props.searchTerm}/>
-                                </Col>
-                            </Form.Group>
-                            <Form.Group as={Row} controlId="subredditControl">
-                                <Form.Label column sm={3} style={{textAlign: 'left'}}>
-                                    Subreddit
-                                </Form.Label>
-                                <Col lg={9}>
-                                    <Row>
-                                        <Col>
-                                            <DropdownButton id="subredditSelect" onSelect={this.handleSubredditDropdownSelect} title={this.state.subreddit}>
-                                                {this.generateSubredditOptions(subreddits)}
-                                            </DropdownButton>
-                                        </Col>
-                                    </Row>
-                                </Col>
-                            </Form.Group>
-                            <Form.Group as={Row}>
-                                <Col sm={{ span: 10, offset: 2}}>
-                                    <Button type="button" id="find-sentiment-info-buttons">Get Sentiment Information</Button>
-                                </Col>
-                            </Form.Group>
-                            {/*<Form.Group as={Row} controlId="subreddit">*/}
-                            {/*    <Form.Label column sm={3} style={{textAlign: 'left'}}>*/}
-                            {/*        Subreddit*/}
-                            {/*    </Form.Label>*/}
-                            {/*    <Col sm={9}>*/}
-                            {/*        <Form.Control type="search" placeholder="r/awww, Politics, etc." onChange={this.handleOnChange}/>*/}
-                            {/*    </Col>*/}
-                            {/*</Form.Group>*/}
-
-
-
-                            {/*<Form.Group as={Row} controlId="frequency">*/}
-                            {/*    <Form.Label column sm={3} style={{textAlign: 'left'}}>*/}
-                            {/*        Frequency*/}
-                            {/*    </Form.Label>*/}
-                            {/*    <Row sm={9}>*/}
-                            {/*        <Row style={{marginLeft: '55px'}}>*/}
-                            {/*        {frequency_options.map(frequency => (*/}
-                            {/*            <div key={frequency} style={{padding: '0px'}}>*/}
-                            {/*                <Form.Check inline label={frequency} type="radio"/>*/}
-                            {/*            </div>*/}
-                            {/*        ))}*/}
-                            {/*        </Row>*/}
-                            {/*    </Row>*/}
-                            {/*</Form.Group>*/}
-                            {/*<Form.Group as={Row}>*/}
-                            {/*    <Form.Label column sm={3} style={{textAlign: 'left'}}>*/}
-                            {/*        Search Options*/}
-                            {/*    </Form.Label>*/}
-                            {/*    <Col sm={4}>*/}
-                            {/*        <Form.Group controlId="searchPosts">*/}
-                            {/*            <Form.Check label="Search in Posts" onChange={this.handleOnChange}/>*/}
-                            {/*        </Form.Group>*/}
-                            {/*    </Col>*/}
-                            {/*    <Col sm={5}>*/}
-                            {/*        <Form.Group controlId="searchComments">*/}
-                            {/*            <Form.Check label="Search in Comments" onChange={this.handleOnChange}/>*/}
-                            {/*        </Form.Group>*/}
-                            {/*    </Col>*/}
-                            {/*</Form.Group>*/}
-                            {/*<Form.Group as={Row}>*/}
-                            {/*    <Col sm={{ span: 10, offset: 2}}>*/}
-                            {/*        <Button type="button" id="get-sentiment-button" onClick={this.handleSubmission}>Analyze</Button>*/}
-                            {/*    </Col>*/}
-                            {/*</Form.Group>*/}
-                        </Form>
-                    </div>
-                </Card.Body>
-            </Card>
+            <div>
+                <Card style={{marginBottom: '50px'}}>
+                    <Card.Body>
+                        <Card.Title>Step 2: Get Sentiment Information</Card.Title>
+                        <Card.Text style={{marginLeft: '4rem', marginRight: '4rem'}}>
+                            Select a subreddit and click to retrieve sentiment analysis!
+                        </Card.Text>
+                        <div align="center">
+                            <Form style={{marginLeft: '100px', marginRight: '100px', marginBottom: '20px', width: '40rem'}}>
+                                <Form.Group as={Row} controlId="searchTermWrapper">
+                                    <Form.Label column sm={3} style={{textAlign: 'left'}}>
+                                        Search Term
+                                    </Form.Label>
+                                    <Col sm={9}>
+                                        <Form.Control plaintext readOnly defaultValue={this.props.searchTerm}/>
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row} controlId="subredditControl">
+                                    <Form.Label column sm={3} style={{textAlign: 'left'}}>
+                                        Subreddit
+                                    </Form.Label>
+                                    <Col lg={9}>
+                                        <Row>
+                                            <Col>
+                                                <DropdownButton onSelect={this.handleSubredditDropdownSelect} title={this.state.subreddit}>
+                                                    {this.generateSubredditOptions(subreddits)}
+                                                </DropdownButton>
+                                            </Col>
+                                        </Row>
+                                    </Col>
+                                </Form.Group>
+                                <Form.Group as={Row}>
+                                    <Col sm={{ span: 10, offset: 2}}>
+                                        <Button type="button" id="find-sentiment-info-buttons" onClick={this.handleNlpDataRequest}>Get Sentiment Information</Button>
+                                    </Col>
+                                </Form.Group>
+                            </Form>
+                        </div>
+                    </Card.Body>
+                </Card>
+                {this.renderSentimentData()}
+            </div>
         );
     }
 

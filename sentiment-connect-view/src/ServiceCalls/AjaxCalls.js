@@ -11,38 +11,31 @@ const reddit_get_context_path = "/reddit/get/";
 
 const pushshiftSubmissionsContextPath = "https://api.pushshift.io/reddit/search/submission/";
 
-//https://api.pushshift.io/reddit/search/submission/?q=trump&aggs=subreddit&frequency=hour&after=400m&size=0
-
-
-//https://api.pushshift.io/reddit/search/submission/?q=trump&aggs=subreddit&frequency=hour&after=400m&size=0
-
 
 /**
- * Calls the endpoint to get sentiment information by subreddit on submissions.
- * @param subreddit the subreddit.
- * @param searchTerm the searchTerm
- * @returns {string}
+ * Gets the sentiment data for the search term in the given subreddit within comments or submissions
+ * @param subreddit
+ * @param searchTerm
+ * @param searchType
+ * @returns {Promise<AxiosResponse<T>>}
  */
-export function getSentimentFromSearchTermSubreddit(subreddit, searchTerm) {
-    let res = '';
-    const endpoint =
-    axios.get(local_path + reddit_get_context_path + "submissions/" + subreddit, {
+export async function getSentimentFromSearchTermSubreddit(subreddit, searchTerm, searchType) {
+    const endpoint = local_path + reddit_get_context_path + searchType + "/";
+    return axios.get(endpoint + subreddit, {
         params: {'searchTerm': searchTerm},
         headers: {"Access-Control-Allow-Origin": "*"}
-    })
-        .then(response => (res = response.data.data))
-        .catch(error => {
+    }).catch(error => {
             console.log(error)
         });
-    return res
 }
 
 /**
- * Calls endpoint to get all subreddits in which the search term appears.
+ * Calls out to pushshift endpoint to get subreddits that contain this term in order of
+ * frequency of mentions.
  * @param searchTerm
  * @param frequency
  * @param timeFrame
- * @returns {string}
+ * @returns {Promise<AxiosResponse<T>>}
  */
 export async function getSubRedditsForSearchTerm(searchTerm, frequency, timeFrame) {
     return axios.get("https://api.pushshift.io/reddit/search/submission/", {
@@ -54,27 +47,7 @@ export async function getSubRedditsForSearchTerm(searchTerm, frequency, timeFram
     }).catch(error => {
             console.log(error)
         });
-    // let res = '';
-    // callAggsEndpoint(searchTerm, frequency, timeFrame).then(response => {
-    //     console.log(response);
-    // });
 }
-
-let callAggsEndpoint = async function(searchTerm, frequency, timeFrame) {
-    return axios.get("https://api.pushshift.io/reddit/search/submission/", {
-        params: {'q': searchTerm,
-            'frequency': frequency,
-            'after': timeFrame,
-            'size': 0,
-            'aggs': 'subreddit'}
-    })
-        .then(response => {
-            return response.data.aggs.subreddit;
-        })
-        .catch(error => {
-            console.log(error)
-        });
-};
 
 /**
  * Calls the endpoint to get sentiment information by subreddit on submissions.
