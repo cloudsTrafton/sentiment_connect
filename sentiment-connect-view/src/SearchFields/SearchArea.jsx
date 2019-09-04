@@ -19,6 +19,7 @@ class SearchArea extends React.PureComponent {
             timeNum: 0,
             frequency: 'Select Sample Frequency',
             showSubreddits: false,
+            validationError: false,
             findSubredditsButtonPressed: false,
             subredditsList: []
         };
@@ -83,10 +84,13 @@ class SearchArea extends React.PureComponent {
             const searchTerm = this.state.searchTerm;
             const frequency = this.frequency;
             const timeFrame = this.state.timeNum + this.state.timeUnit;
+            this.setState({validationError: false}, null);
             let res = await getSubRedditsForSearchTerm(searchTerm, frequency, timeFrame);
             this.setState({showSubreddits: true,
                 subredditsList: res.data.aggs.subreddit}, null);
             return res.data.aggs.subreddit;
+        } else {
+            this.setState({validationError: true}, null);
         }
     };
 
@@ -118,13 +122,24 @@ class SearchArea extends React.PureComponent {
             const subreddits = this.state.subredditsList;
             return <GetSentimentForm subreddits={subreddits} searchTerm={this.state.searchTerm}/>
         }
+        else if (this.state.validationError) {
+            return (
+                <Card bg="danger" text="white" style={{ width: '42rem' }}>
+                    <Card.Body>
+                        <Card.Text>
+                            Please select valid entries for the frequency, search term, and unit of time.
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
+            );
+        }
         else if (this.state.findSubredditsButtonPressed && !this.state.showSubreddits) {
             // Show an error if it shouldnt show the subreddits due to validation error.
             return (
-            <Card bg="danger" text="white" style={{ width: '42rem' }}>
+            <Card bg="info" text="white" style={{ width: '42rem' }}>
                 <Card.Body>
                     <Card.Text>
-                        Please select valid entries for the frequency, search term, and unit of time.
+                        Searching for subreddits...
                     </Card.Text>
                 </Card.Body>
             </Card>
@@ -189,51 +204,6 @@ class SearchArea extends React.PureComponent {
                             <Button type="button" id="find-occurrences-buttons" onClick={this.getPossibleSubredditsForSearchTerm}>Find Occurrences</Button>
                         </Col>
                     </Form.Group>
-                    {/*<Form.Group as={Row} controlId="subreddit">*/}
-                    {/*    <Form.Label column sm={3} style={{textAlign: 'left'}}>*/}
-                    {/*        Subreddit*/}
-                    {/*    </Form.Label>*/}
-                    {/*    <Col sm={9}>*/}
-                    {/*        <Form.Control type="search" placeholder="r/awww, Politics, etc." onChange={this.handleOnChange}/>*/}
-                    {/*    </Col>*/}
-                    {/*</Form.Group>*/}
-
-
-
-                    {/*<Form.Group as={Row} controlId="frequency">*/}
-                    {/*    <Form.Label column sm={3} style={{textAlign: 'left'}}>*/}
-                    {/*        Frequency*/}
-                    {/*    </Form.Label>*/}
-                    {/*    <Row sm={9}>*/}
-                    {/*        <Row style={{marginLeft: '55px'}}>*/}
-                    {/*        {frequency_options.map(frequency => (*/}
-                    {/*            <div key={frequency} style={{padding: '0px'}}>*/}
-                    {/*                <Form.Check inline label={frequency} type="radio"/>*/}
-                    {/*            </div>*/}
-                    {/*        ))}*/}
-                    {/*        </Row>*/}
-                    {/*    </Row>*/}
-                    {/*</Form.Group>*/}
-                    {/*<Form.Group as={Row}>*/}
-                    {/*    <Form.Label column sm={3} style={{textAlign: 'left'}}>*/}
-                    {/*        Search Options*/}
-                    {/*    </Form.Label>*/}
-                    {/*    <Col sm={4}>*/}
-                    {/*        <Form.Group controlId="searchPosts">*/}
-                    {/*            <Form.Check label="Search in Posts" onChange={this.handleOnChange}/>*/}
-                    {/*        </Form.Group>*/}
-                    {/*    </Col>*/}
-                    {/*    <Col sm={5}>*/}
-                    {/*        <Form.Group controlId="searchComments">*/}
-                    {/*            <Form.Check label="Search in Comments" onChange={this.handleOnChange}/>*/}
-                    {/*        </Form.Group>*/}
-                    {/*    </Col>*/}
-                    {/*</Form.Group>*/}
-                    {/*<Form.Group as={Row}>*/}
-                    {/*    <Col sm={{ span: 10, offset: 2}}>*/}
-                    {/*        <Button type="button" id="get-sentiment-button" onClick={this.handleSubmission}>Analyze</Button>*/}
-                    {/*    </Col>*/}
-                    {/*</Form.Group>*/}
                 </Form>
                 {this.renderSubredditsList()}
             </div>

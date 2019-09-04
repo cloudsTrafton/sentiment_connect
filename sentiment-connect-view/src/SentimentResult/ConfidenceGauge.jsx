@@ -10,7 +10,7 @@ class ConfidenceGauge extends React.PureComponent {
 
     render() {
         return (
-            <SimpleReactGauge percent={this.props.percent} halfCircle={true} animate={true} maxWidth={200}/>
+            <SimpleReactGauge percent={this.props.percent} color={this.props.color} halfCircle={true} animate={true} maxWidth={200}/>
         );
     }
 
@@ -20,7 +20,7 @@ ConfidenceGauge.propTypes = {
     percent: PropTypes.number.isRequired,
     // animate: PropTypes.bool,
     // bgcolor: PropTypes.string,
-    // color: PropTypes.string,
+    color: PropTypes.string,
     // halfCircle: PropTypes.bool,
     // lineWidthPercent: PropTypes.number,
     // maxWidth: PropTypes.number,
