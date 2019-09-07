@@ -11,7 +11,8 @@
     "keymirror": "latest",
     "react-router-dom": "latest",
     "core-js": "latest",
-    "axios": "latest"
+    "axios": "latest",
+    "react-loader-spinner": "latest"
   },
   "scripts": {
     "start": "react-scripts start",

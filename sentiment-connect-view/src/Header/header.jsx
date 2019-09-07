@@ -12,7 +12,7 @@ class Header extends React.Component {
             <Card style={{width: '100%', display: 'inline-block', alignContent: 'center'}}>
                 <Card.Header style={{padding: '10px', backgroundColor: 'white'}}>
                     <Image src={logo}/>
-                    <h6>Real time sentiment analysis with a single click</h6>
+                    <h6>Real time Sentiment Analysis from Reddit</h6>
                     <Navbar/>
                 </Card.Header>
             </Card>

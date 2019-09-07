@@ -38,7 +38,7 @@ case class RedditNlpObject(entityType: String,
 
 object RedditNlpObject {
   val DEFAULT_OBJ = new RedditNlpObject(
-    entityType = "",
+    entityType = "DEFAULT_OBJECT",
     loadTime = "2019-01-01",
     entityName = "",
     negativeConfidenceAvg = 0.0,

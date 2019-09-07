@@ -7,6 +7,7 @@ import Row from "react-bootstrap/es/Row";
 import Col from "react-bootstrap/es/Col";
 import DropdownButton from "react-bootstrap/es/DropdownButton";
 import ResultCard from "../SentimentResult/ResultCard";
+import Loader from 'react-loader-spinner';
 
 class GetSentimentForm extends React.Component {
 
@@ -32,6 +33,8 @@ class GetSentimentForm extends React.Component {
         // TODO
         let isValidInput = true;
         let nlpDataResults = '';
+        // Let the component know that search data has been initiated.
+        this.setState({searchInitiated: true}, null);
         if (!isValidInput) {
             // TODO show some red outline or something and some kind of message saying the
             // input was bad.
@@ -39,8 +42,7 @@ class GetSentimentForm extends React.Component {
             let res = await getSentimentFromSearchTermSubreddit(this.state.subreddit, this.state.searchTerm, this.state.searchType);
             // nlpDataResults = res.data;
             // console.log(nlpDataResults);
-            this.setState({sentimentResults: res.data,
-                                 searchInitiated: true}, null);
+            this.setState({sentimentResults: res.data}, null);
         }
     };
 
@@ -88,24 +90,37 @@ class GetSentimentForm extends React.Component {
             negativeConfidence.push(value.negativeConfidenceAvg);
             negativeCount += value.negativeMentionCount;
             positiveCount += value.positiveMentionCount;
-            // sentimentComponents.push(<ResultCard negativeConfidence={value.negativeConfidenceAvg}
-            //                                      negativeMentionCount={value.negativeMentionCount}
-            //                                      positiveConfidence={value.positiveConfidenceAvg}
-            //                                      positiveMentionCount={value.positiveMentionCount}
-            //                                      mentionType={value.entityType} topic={value.entityName}
-            //                                     subreddit={value.subreddit}/>)
             console.log(value);
         }
-        return {positiveConfidenceAvg: this.arrAvg(positiveConfidence),
-                negativeConfidenceAvg: this.arrAvg(negativeConfidence),
-                positiveCount: positiveCount,
-                negativeCount: negativeCount}
-    }
+        return {
+            positiveConfidenceAvg: this.arrAvg(positiveConfidence),
+            negativeConfidenceAvg: this.arrAvg(negativeConfidence),
+            positiveCount: positiveCount,
+            negativeCount: negativeCount
+            }
+    };
+
+
     renderSentimentData = () => {
         console.log("render sentiment data!");
         const results = this.state.sentimentResults;
         const topic = this.state.searchTerm;
         const subreddit = this.state.subreddit;
+        if (results.length === 1 && results[0].entityType === "DEFAULT_OBJECT") {
+            // If the search was valid but there hasn't been any data loaded yet, then we show a message to the user about
+            // it.
+            return (
+                <Card bg="success" text="white" style={{ width: '50rem' }}>
+                    <Card.Body>
+                        <Card.Title>Sentiment Search Submitted</Card.Title>
+                        <Card.Text>
+                            Thank you for your search! This data has not been loaded yet, but we are working on it. Please retry your search in 24
+                            hours.
+                        </Card.Text>
+                    </Card.Body>
+                </Card>
+            );
+        }
         if (results !== '' && this.state.searchInitiated) {
             // let sentimentComponents = [];
             const aggregatedResults = this.aggregateSentimentData(results);
@@ -125,13 +140,13 @@ class GetSentimentForm extends React.Component {
                 <Card bg="info" text="white" style={{ width: '42rem' }}>
                     <Card.Body>
                         <Card.Text>
-                            Loading your sentiment data. Please be patient.
+                            Looking for sentiment data. Please be patient...
                         </Card.Text>
+                        <Loader type="ThreeDots" color="white" height={75} width={75} />
                     </Card.Body>
                 </Card>
             );
         } else {
-            console.log("returning null");
             // If we don't have anything and we are null, then we havent looked yet.
             return null;
         }

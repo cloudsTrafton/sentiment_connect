@@ -9,12 +9,6 @@ class Navbar extends React.PureComponent {
             activeKey="/home"
             onSelect={selectedKey => alert(`selected ${selectedKey}`)}>
             <Nav.Item>
-                <Nav.Link href="/home">Home</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-                <Nav.Link eventKey="dashboard-link">Dashboard</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
                 <Nav.Link eventKey="link-2">About</Nav.Link>
             </Nav.Item>
         </Nav>

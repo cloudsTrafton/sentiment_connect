@@ -7,6 +7,7 @@ import FormControl from "react-bootstrap/FormControl";
 import DropdownButton from "react-bootstrap/es/DropdownButton";
 import Card from "react-bootstrap/Card";
 import GetSentimentForm from "./GetSentimentForm";
+import Loader from "react-loader-spinner";
 
 class SearchArea extends React.PureComponent {
 
@@ -141,6 +142,7 @@ class SearchArea extends React.PureComponent {
                     <Card.Text>
                         Searching for subreddits...
                     </Card.Text>
+                    <Loader type="ThreeDots" color="white" height={75} width={75} />
                 </Card.Body>
             </Card>
             );

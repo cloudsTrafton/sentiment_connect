@@ -9,6 +9,7 @@ class ResultCard extends React.PureComponent {
 
     /**
      * Get a different color based on the confidence score. Greener scores are more confident.
+     * @return the color to match the sentiment
      */
     getSentimentColor = (confidence) => {
         console.log(confidence);
