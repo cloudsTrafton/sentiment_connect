@@ -13,19 +13,25 @@ class SearchArea extends React.PureComponent {
 
 
     constructor(props) {
+
         super(props);
+        this.frequency_options = ['hour', 'day', 'week', 'month', 'year'];
+        this.searchTypes = ['submission', 'comment'];
+
+
         this.state = {
             searchTerm: '',
             timeUnit: 'Select Time Unit',
             timeNum: 0,
             frequency: 'Select Sample Frequency',
+            searchType: this.searchTypes[0],
             showSubreddits: false,
             validationError: false,
             findSubredditsButtonPressed: false,
             subredditsList: []
         };
 
-        this.frequency_options = ['hour', 'day', 'week', 'month', 'year'];
+
     }
 
     /**
@@ -52,6 +58,14 @@ class SearchArea extends React.PureComponent {
      */
     handleFrequencyDropdownSelect = (event) => {
         this.setState({frequency: event},  null);
+    };
+
+    /**
+     * Set the search type to the text in the incoming event.
+     * @param event
+     */
+    handleSearchTypeSelect = (event) => {
+        this.setState({searchType: event},  null);
     };
 
     /**
@@ -85,14 +99,25 @@ class SearchArea extends React.PureComponent {
             const searchTerm = this.state.searchTerm;
             const frequency = this.frequency;
             const timeFrame = this.state.timeNum + this.state.timeUnit;
+            const searchType = this.state.searchType;
             this.setState({validationError: false}, null);
-            let res = await getSubRedditsForSearchTerm(searchTerm, frequency, timeFrame);
+            let res = await getSubRedditsForSearchTerm(searchTerm, frequency, timeFrame, searchType);
             this.setState({showSubreddits: true,
                 subredditsList: res.data.aggs.subreddit}, null);
             return res.data.aggs.subreddit;
         } else {
             this.setState({validationError: true}, null);
         }
+    };
+
+
+
+    generateSearchTypeOptions = () => {
+        let items = [];
+        for (let i = 0; i <= this.searchTypes.length; i++) {
+            items.push(<DropdownItem key={i} eventKey={this.searchTypes[i]} value={this.searchTypes[i]}>{this.searchTypes[i]}</DropdownItem>);
+        }
+        return items;
     };
 
     /**
@@ -121,7 +146,7 @@ class SearchArea extends React.PureComponent {
     renderSubredditsList = () => {
         if (this.state.findSubredditsButtonPressed && this.state.showSubreddits) {
             const subreddits = this.state.subredditsList;
-            return <GetSentimentForm subreddits={subreddits} searchTerm={this.state.searchTerm}/>
+            return <GetSentimentForm subreddits={subreddits} searchTerm={this.state.searchTerm} searchType={this.state.searchType}/>
         }
         else if (this.state.validationError) {
             return (
@@ -168,6 +193,20 @@ class SearchArea extends React.PureComponent {
                         </Form.Label>
                         <Col sm={9}>
                             <FormControl type="search" id="searchTerm" placeholder="Trump, vegans, etc." onChange={this.handleOnChange}/>
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} controlId="searchType">
+                        <Form.Label column sm={3} style={{textAlign: 'left'}}>
+                            Search Type
+                        </Form.Label>
+                        <Col lg={9}>
+                            <Row>
+                                <Col>
+                                    <DropdownButton id="searchTypeSelect" onSelect={this.handleSearchTypeSelect} title={this.state.searchType}>
+                                        {this.generateSearchTypeOptions()}
+                                    </DropdownButton>
+                                </Col>
+                            </Row>
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row} controlId="timeFrame">

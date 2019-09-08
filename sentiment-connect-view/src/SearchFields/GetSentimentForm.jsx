@@ -16,7 +16,7 @@ class GetSentimentForm extends React.Component {
         this.state = {
             subreddit: 'Select a Subreddit',
             searchTerm: this.props.searchTerm,
-            searchType: 'submissions', // TODO set this above
+            searchType: this.props.searchType,
             searchInitiated: false,
             sentimentResults: '',
 
@@ -90,7 +90,6 @@ class GetSentimentForm extends React.Component {
             negativeConfidence.push(value.negativeConfidenceAvg);
             negativeCount += value.negativeMentionCount;
             positiveCount += value.positiveMentionCount;
-            console.log(value);
         }
         return {
             positiveConfidenceAvg: this.arrAvg(positiveConfidence),
@@ -131,7 +130,8 @@ class GetSentimentForm extends React.Component {
                                 positiveConfidence={aggregatedResults.positiveConfidenceAvg}
                                 positiveMentionCount={aggregatedResults.positiveCount}
                                 topic={topic}
-                                subreddit={subreddit}/>
+                                subreddit={subreddit}
+                                searchType={this.state.searchType}/>
                 </div>
             )
 
@@ -210,7 +210,8 @@ class GetSentimentForm extends React.Component {
 
 GetSentimentForm.propTypes = {
     subreddits: PropTypes.array.isRequired,
-    searchTerm: PropTypes.string.isRequired
+    searchTerm: PropTypes.string.isRequired,
+    searchType: PropTypes.string.isRequired,
 };
 
 

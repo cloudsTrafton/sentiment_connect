@@ -9,9 +9,6 @@ const local_path = "http://localhost:8080";
 
 const reddit_get_context_path = "/reddit/get/";
 
-const pushshiftSubmissionsContextPath = "https://api.pushshift.io/reddit/search/submission/";
-
-
 /**
  * Gets the sentiment data for the search term in the given subreddit within comments or submissions
  * @param subreddit
@@ -35,10 +32,11 @@ export async function getSentimentFromSearchTermSubreddit(subreddit, searchTerm,
  * @param searchTerm
  * @param frequency
  * @param timeFrame
+ * @param searchType submissions or comments
  * @returns {Promise<AxiosResponse<T>>}
  */
-export async function getSubRedditsForSearchTerm(searchTerm, frequency, timeFrame) {
-    return axios.get("https://api.pushshift.io/reddit/search/submission/", {
+export async function getSubRedditsForSearchTerm(searchTerm, frequency, timeFrame, searchType) {
+    return axios.get("https://api.pushshift.io/reddit/search/" + searchType + "/", {
         params: {'q': searchTerm,
                  'frequency': frequency,
                  'after': timeFrame,

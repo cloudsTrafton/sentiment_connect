@@ -40,7 +40,7 @@ class ResultCard extends React.PureComponent {
 
         return (
             <Card style={{marginLeft: '100px', marginRight: '100px', marginBottom: '20px'}}>
-                <Card.Header as="h5">Sentiment Data for {this.props.topic} in {"r/" + this.props.subreddit}</Card.Header>
+                <Card.Header as="h5">Sentiment Data for {this.props.topic} in {"r/" + this.props.subreddit} by {this.props.searchType + "s"}</Card.Header>
                 <Card.Body>
                     <div style={{alignItems: 'left'}}>
                         <Row sm={12}>
@@ -70,6 +70,7 @@ ResultCard.propTypes = {
     mentionType: PropTypes.string,
     topic: PropTypes.string.isRequired,
     subreddit: PropTypes.string.isRequired,
+    searchType: PropTypes.string.isRequired,
 };
 
 export default ResultCard;
