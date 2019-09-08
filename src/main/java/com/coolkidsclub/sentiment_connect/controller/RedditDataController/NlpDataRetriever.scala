@@ -26,6 +26,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
       .option("header", value = true)
       .json(this.commentsS3Bucket).toDF()
       .where(col(colName = "named_entities").rlike(searchTerm) && col(colName = "subreddit") === subReddit)
+      .orderBy(desc(columnName = "load_ts"))
 
     val formattedData: Array[RedditNlpObject] = rawNlpData.rdd.collect().map(row => {
       RedditNlpObject(
@@ -50,6 +51,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
       .option("header", value = true)
       .json(this.submissionsS3Bucket).toDF()
       .where(col(colName = "named_entities").rlike(searchTerm) && col(colName = "subreddit") === subReddit)
+      .orderBy(desc(columnName = "load_ts"))
 
     val formattedData: Array[RedditNlpObject] = rawNlpData.rdd.collect().map(row => {
       RedditNlpObject(

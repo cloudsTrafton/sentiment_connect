@@ -20,7 +20,7 @@ case class RedditNlpObject(entityType: String,
 
   // Reformat the load_ts timestamp
   this.loadTime = new Timestamp(dateFormat.parse(this.loadTime).getTime).toString.split(" ")(0)
-  this.loadTime = this.loadTime.toString;
+  this.loadTime = this.loadTime.toString
 
   // Pretty print formatting
   override def toString: String = {
