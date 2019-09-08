@@ -121,19 +121,28 @@ class GetSentimentForm extends React.Component {
             );
         }
         if (results !== '' && this.state.searchInitiated) {
-            // let sentimentComponents = [];
-            const aggregatedResults = this.aggregateSentimentData(results);
+            let components = [];
+            for (let i = 0; i < results.length; i++) {
+                console.log("Length of results...");
+                let value = results[i];
+                components.push(
+                    <div style={{marginTop: '1rem'}}>
+                        <ResultCard negativeConfidence={value.negativeConfidenceAvg}
+                                    negativeMentionCount={value.negativeMentionCount}
+                                    positiveConfidence={value.positiveConfidenceAvg}
+                                    positiveMentionCount={value.positiveMentionCount}
+                                    topic={topic}
+                                    subreddit={subreddit}
+                                    date={value.loadTime}
+                                    context={value.entityType}
+                                    searchType={this.state.searchType}/>
+                    </div>
+                );
+            }
             return (
-                <div style={{marginTop: '1rem'}}>
-                    <ResultCard negativeConfidence={aggregatedResults.negativeConfidenceAvg}
-                                negativeMentionCount={aggregatedResults.negativeCount}
-                                positiveConfidence={aggregatedResults.positiveConfidenceAvg}
-                                positiveMentionCount={aggregatedResults.positiveCount}
-                                topic={topic}
-                                subreddit={subreddit}
-                                searchType={this.state.searchType}/>
-                </div>
-            )
+                <div>
+                    {components}
+                </div>);
 
         } else if (this.state.searchInitiated && this.state.sentimentResults === '') {
             return (
