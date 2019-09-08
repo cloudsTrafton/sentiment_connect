@@ -4,7 +4,7 @@ import java.sql.Timestamp
 import java.text.SimpleDateFormat
 
 
-// Class to hold the NLP data by each row in the Dataframe
+// Class to hold the NLP data by each row in the DataFrame
 case class RedditNlpObject(entityType: String,
                            var loadTime: String,
                            entityName: String,
