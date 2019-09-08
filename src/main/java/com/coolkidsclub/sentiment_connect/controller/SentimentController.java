@@ -23,15 +23,15 @@ public class SentimentController {
     public String getSubmissionSentimentData(@PathVariable String subreddit, @RequestParam String searchTerm) {
         ArrayList<RedditNlpObject> nlpObjects = redditService.getSubmissionNlpData(searchTerm, subreddit);
         Type listType = new TypeToken<ArrayList<RedditNlpObject>>(){}.getType();
-        String json = new Gson().toJson(nlpObjects, listType);
-        return json;
+        return new Gson().toJson(nlpObjects, listType);
     }
 
 
     @GetMapping(value = "/get/comments/{subreddit}", produces = "application/json")
     public String getCommentSentimentData(@PathVariable String subreddit, @RequestParam String searchTerm) {
         ArrayList<RedditNlpObject> nlpObjects = redditService.getCommentNlpData(searchTerm, subreddit);
-        return new Gson().toJson(nlpObjects.toString());
+        Type listType = new TypeToken<ArrayList<RedditNlpObject>>(){}.getType();
+        return new Gson().toJson(nlpObjects, listType);
     }
 
 }
