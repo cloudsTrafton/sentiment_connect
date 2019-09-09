@@ -13,11 +13,8 @@ object DataTesting extends App {
   val rawSubmissionDataTest: DataFrame = NlpDataRetriever.getSubmissionDataFull
   println(s"Full Submission Count: ${rawSubmissionDataTest.count()}\n")
   println("Distinct Submission Parameters: \n")
-  val submissionParams: Array[(String, String)] = rawSubmissionDataTest.select("named_entities", "subreddit")
-    .distinct().rdd.collect
-    .map(row => {
-      (row(0).toString, row(1).toString)
-    })
+
+  val submissionParams: Array[(String, String)] = NlpDataRetriever.getSubmissionParams
   submissionParams.foreach(println)
 
 
@@ -25,11 +22,7 @@ object DataTesting extends App {
   val rawCommentDataTest = NlpDataRetriever.getCommentDataFull
   println(s"\nFull Comment Count: ${rawCommentDataTest.count()}\n")
   println("Distinct Comment Parameters: \n")
-  val commentParams: Array[(String, String)] = rawCommentDataTest.select("named_entities", "subreddit")
-    .distinct().rdd.collect
-    .map(row => {
-      (row(0).toString, row(1).toString)
-    })
+  val commentParams: Array[(String, String)] = NlpDataRetriever.getCommentParams
   commentParams.foreach(println)
 
 

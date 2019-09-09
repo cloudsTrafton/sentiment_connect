@@ -144,7 +144,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
   }
 
 
-  private def getSubmissionParams: Array[(String, String)] = {
+   def getSubmissionParams: Array[(String, String)] = {
     this.sparkSession.read
       .option("inferSchema", value = true)
       .option("header", value = true)
@@ -153,7 +153,7 @@ object NlpDataRetriever extends SparkSessionWrapper {
   }
 
 
-  private def getCommentParams: Array[(String, String)] = {
+   def getCommentParams: Array[(String, String)] = {
     this.sparkSession.read
       .option("inferSchema", value = true)
       .option("header", value = true)
