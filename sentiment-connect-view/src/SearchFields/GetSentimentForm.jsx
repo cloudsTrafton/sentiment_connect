@@ -19,6 +19,7 @@ class GetSentimentForm extends React.Component {
             searchType: this.props.searchType,
             searchInitiated: false,
             sentimentResults: '',
+            validationError: false
 
         };
     }
@@ -31,17 +32,15 @@ class GetSentimentForm extends React.Component {
      */
     handleNlpDataRequest = async (event) => {
         // TODO
-        let isValidInput = true;
+        let isValidInput = this.validateInput();
         let nlpDataResults = '';
         // Let the component know that search data has been initiated.
         this.setState({searchInitiated: true}, null);
         if (!isValidInput) {
-            // TODO show some red outline or something and some kind of message saying the
-            // input was bad.
+            this.setState({validationError: true}, null);
         } else {
+            this.setState({validationError: false}, null);
             let res = await getSentimentFromSearchTermSubreddit(this.state.subreddit, this.state.searchTerm, this.state.searchType);
-            // nlpDataResults = res.data;
-            // console.log(nlpDataResults);
             this.setState({sentimentResults: res.data}, null);
         }
     };
@@ -105,59 +104,72 @@ class GetSentimentForm extends React.Component {
         const results = this.state.sentimentResults;
         const topic = this.state.searchTerm;
         const subreddit = this.state.subreddit;
-        if (results.length === 1 && results[0].entityType === "DEFAULT_OBJECT") {
-            // If the search was valid but there hasn't been any data loaded yet, then we show a message to the user about
-            // it.
-            return (
-                <Card bg="success" text="white" style={{ width: '50rem' }}>
-                    <Card.Body>
-                        <Card.Title>Sentiment Search Submitted</Card.Title>
-                        <Card.Text>
-                            Thank you for your search! This data has not been loaded yet, but we are working on it. Please retry your search in 24
-                            hours.
-                        </Card.Text>
-                    </Card.Body>
-                </Card>
-            );
-        }
-        if (results !== '' && this.state.searchInitiated) {
-            let components = [];
-            for (let i = 0; i < results.length; i++) {
-                console.log("Length of results...");
-                let value = results[i];
-                components.push(
-                    <div style={{marginTop: '1rem'}}>
-                        <ResultCard negativeConfidence={value.negativeConfidenceAvg}
-                                    negativeMentionCount={value.negativeMentionCount}
-                                    positiveConfidence={value.positiveConfidenceAvg}
-                                    positiveMentionCount={value.positiveMentionCount}
-                                    topic={topic}
-                                    subreddit={subreddit}
-                                    date={value.loadTime}
-                                    context={value.entityType}
-                                    searchType={this.state.searchType}/>
-                    </div>
+        if (!this.state.validationError) {
+            if (results.length === 1 && results[0].entityType === "DEFAULT_OBJECT") {
+                // If the search was valid but there hasn't been any data loaded yet, then we show a message to the user about
+                // it.
+                return (
+                    <Card bg="success" text="white" style={{width: '50rem'}}>
+                        <Card.Body>
+                            <Card.Title>Sentiment Search Submitted</Card.Title>
+                            <Card.Text>
+                                Thank you for your search! This data has not been loaded yet, but we are working on it.
+                                Please retry your search in 24
+                                hours.
+                            </Card.Text>
+                        </Card.Body>
+                    </Card>
                 );
             }
-            return (
-                <div>
-                    {components}
-                </div>);
+            if (results !== '' && this.state.searchInitiated) {
+                let components = [];
+                for (let i = 0; i < results.length; i++) {
+                    console.log("Length of results...");
+                    let value = results[i];
+                    components.push(
+                        <div style={{marginTop: '1rem'}}>
+                            <ResultCard negativeConfidence={value.negativeConfidenceAvg}
+                                        negativeMentionCount={value.negativeMentionCount}
+                                        positiveConfidence={value.positiveConfidenceAvg}
+                                        positiveMentionCount={value.positiveMentionCount}
+                                        topic={topic}
+                                        subreddit={subreddit}
+                                        date={value.loadTime}
+                                        context={value.entityType}
+                                        searchType={this.state.searchType}/>
+                        </div>
+                    );
+                }
+                return (
+                    <div>
+                        {components}
+                    </div>);
 
-        } else if (this.state.searchInitiated && this.state.sentimentResults === '') {
+            } else if (this.state.searchInitiated && this.state.sentimentResults === '') {
+                return (
+                    <Card bg="info" text="white" style={{width: '42rem'}}>
+                        <Card.Body>
+                            <Card.Text>
+                                Looking for sentiment data. Please be patient...
+                            </Card.Text>
+                            <Loader type="ThreeDots" color="white" height={75} width={75}/>
+                        </Card.Body>
+                    </Card>
+                );
+            } else {
+                // If we don't have anything and we are null, then we havent looked yet.
+                return null;
+            }
+        } else {
             return (
-                <Card bg="info" text="white" style={{ width: '42rem' }}>
+                <Card bg="danger" text="white" style={{ width: '42rem' }}>
                     <Card.Body>
                         <Card.Text>
-                            Looking for sentiment data. Please be patient...
+                            Please select a valid Subreddit from the list.
                         </Card.Text>
-                        <Loader type="ThreeDots" color="white" height={75} width={75} />
                     </Card.Body>
                 </Card>
             );
-        } else {
-            // If we don't have anything and we are null, then we havent looked yet.
-            return null;
         }
     }
 
