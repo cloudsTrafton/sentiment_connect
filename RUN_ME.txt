@@ -1,0 +1,14 @@
+HOW TO RUN THIS APPLICATION
+
+
+1. Run the Spring service
+    a. cd into the root directory of the project (sentiment-connect)
+    b. Run the following maven command "mvn spring-boot:run". This should start an instance of the service on localhost:8080
+    c. ALTERNATIVE: import into IntelliJ Ultimate as a Spring project, and press the play button on the top right.
+
+2. Run the Front end (React App)
+    a. Make sure you have NPM installed. If you do not, please install at: https://www.npmjs.com/get-npm
+    b. Once NPM is installed, navigate to sentiment-connect-view
+    c. Once in here, please run 'npm install' to retrieve all dependencies for the application.
+    d. Once all dependencies are installed, run 'npm start' to start a local node server to serve the application
+    c. Navigate to localhost:3000 and the application should appear. You may now start using the application.
